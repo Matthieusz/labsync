@@ -36,9 +36,9 @@ export default function Header() {
 					</a>
 				</nav>
 				<div className="flex items-center space-x-3">
-					<Button variant="secondary">
-						<Link to="/login">Sign In</Link>
-					</Button>
+					<Link to="/login">
+						<Button variant="secondary">Sign In</Button>
+					</Link>
 					<ModeToggle />
 				</div>
 			</div>
