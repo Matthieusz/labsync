@@ -183,6 +183,15 @@ export default function SignUpForm({
 						</Button>
 					</div>
 				</div>
+				<div className="mt-4 text-center">
+					<Button
+						variant="ghost"
+						onClick={() => navigate({ to: "/" })}
+						className="text-muted-foreground hover:text-foreground"
+					>
+						← Back
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
