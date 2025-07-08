@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { BookOpen } from "lucide-react";
 import { ModeToggle } from "../mode-toggle";
 import { Button } from "../ui/button";
@@ -35,7 +36,9 @@ export default function Header() {
 					</a>
 				</nav>
 				<div className="flex items-center space-x-3">
-					<Button variant="secondary">Sign In</Button>
+					<Button variant="secondary">
+						<Link to="/login">Sign In</Link>
+					</Button>
 					<ModeToggle />
 				</div>
 			</div>

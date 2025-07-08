@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowRight, Calendar, FileText, Users } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -22,6 +23,7 @@ export default function Hero() {
 					<Button size="lg" className="px-8 py-3 text-lg">
 						Start Now
 						<ArrowRight className="ml-2 h-5 w-5" />
+						<Link to="/dashboard">Sign In</Link>
 					</Button>
 				</div>
 				<div className="relative mt-12">
