@@ -14,11 +14,12 @@ export default function CTASection() {
 					collaborate effectively
 				</p>
 				<div className="flex flex-col justify-center gap-4 sm:flex-row">
-					<Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
-						Start Now
-						<ArrowRight className="ml-2 h-5 w-5" />
-						<Link to="/dashboard">Sign In</Link>
-					</Button>
+					<Link to="/login">
+						<Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
+							Start Now
+							<ArrowRight className="ml-2 h-5 w-5" />
+						</Button>
+					</Link>
 				</div>
 			</div>
 		</section>

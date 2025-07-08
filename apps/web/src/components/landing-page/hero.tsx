@@ -20,11 +20,12 @@ export default function Hero() {
 					technical students and laboratory teams.
 				</p>
 				<div className="flex flex-col justify-center gap-4 sm:flex-row">
-					<Button size="lg" className="px-8 py-3 text-lg">
-						Start Now
-						<ArrowRight className="ml-2 h-5 w-5" />
-						<Link to="/dashboard">Sign In</Link>
-					</Button>
+					<Link to="/login">
+						<Button size="lg" className="px-8 py-3 text-lg">
+							Start now
+							<ArrowRight className="ml-2 h-5 w-5" />
+						</Button>
+					</Link>
 				</div>
 				<div className="relative mt-12">
 					<div className="mx-auto max-w-3xl rounded-xl border border-border bg-card p-8 shadow-xl">
