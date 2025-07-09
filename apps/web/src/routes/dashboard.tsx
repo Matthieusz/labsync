@@ -28,9 +28,10 @@ function RouteComponent() {
 	}
 
 	return (
-		<div>
+		<div className="min-h-screen bg-background p-4 text-foreground">
 			<h1>Dashboard</h1>
 			<p>Welcome {session?.user.name}</p>
+			<p>{session?.user.email}</p>
 			<p>privateData: {privateData.data?.message}</p>
 		</div>
 	);
