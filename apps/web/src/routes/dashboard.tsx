@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import Header from "@/components/dashboard/header";
+import Loader from "@/components/loader";
 import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/utils/trpc";
 
@@ -25,7 +26,7 @@ function RouteComponent() {
 	}, [session, isPending, navigate]);
 
 	if (isPending) {
-		return <div>Loading...</div>;
+		return <Loader />;
 	}
 
 	return (
