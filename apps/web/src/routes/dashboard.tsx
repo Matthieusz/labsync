@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import Header from "@/components/dashboard/header";
 import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/utils/trpc";
 
@@ -28,10 +29,8 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="min-h-screen bg-background p-4 text-foreground">
-			<h1>Dashboard</h1>
-			<p>Welcome {session?.user.name}</p>
-			<p>{session?.user.email}</p>
+		<div className="min-h-screen bg-background text-foreground">
+			<Header />
 			<p>privateData: {privateData.data?.message}</p>
 		</div>
 	);
