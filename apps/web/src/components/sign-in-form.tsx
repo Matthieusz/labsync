@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import z from "zod/v4";
 import { authClient } from "@/lib/auth-client";
@@ -8,15 +9,19 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export default function SignInForm({
-	onSwitchToSignUp,
-}: {
-	onSwitchToSignUp: () => void;
-}) {
+export default function SignInForm() {
 	const navigate = useNavigate({
 		from: "/",
 	});
-	const { isPending } = authClient.useSession();
+	const { isPending, data: session } = authClient.useSession();
+
+	useEffect(() => {
+		if (session?.user) {
+			navigate({
+				to: "/dashboard",
+			});
+		}
+	}, [session, navigate]);
 
 	const form = useForm({
 		defaultValues: {
@@ -31,9 +36,6 @@ export default function SignInForm({
 				},
 				{
 					onSuccess: () => {
-						navigate({
-							to: "/dashboard",
-						});
 						toast.success("Sign in successful");
 					},
 					onError: (error) => {
@@ -145,7 +147,11 @@ export default function SignInForm({
 					<div className="mt-6 text-center">
 						<Button
 							variant="link"
-							onClick={onSwitchToSignUp}
+							onClick={() =>
+								navigate({
+									to: "/sign-up",
+								})
+							}
 							className="text-primary hover:text-primary/80"
 						>
 							Need an account? Sign Up
