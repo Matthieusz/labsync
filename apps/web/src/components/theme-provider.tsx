@@ -28,7 +28,6 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
 	const [theme, setTheme] = useState<Theme>(defaultTheme);
 
-	// Hydrate theme from localStorage after component mounts (client-side only)
 	useEffect(() => {
 		const storedTheme = localStorage.getItem(storageKey) as Theme;
 		if (storedTheme) {

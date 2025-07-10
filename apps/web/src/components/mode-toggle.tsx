@@ -1,4 +1,5 @@
 import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,14 +10,46 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
-	const { setTheme } = useTheme();
+	const { theme, setTheme } = useTheme();
+	const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
+
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		if (theme !== "system") {
+			setResolvedTheme(theme as "dark" | "light");
+			return;
+		}
+
+		const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+		setResolvedTheme(systemTheme.matches ? "dark" : "light");
+
+		const updateTheme = (e: MediaQueryListEvent) => {
+			setResolvedTheme(e.matches ? "dark" : "light");
+		};
+
+		systemTheme.addEventListener("change", updateTheme);
+		return () => systemTheme.removeEventListener("change", updateTheme);
+	}, [theme]);
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="clear" size="icon">
-					<Sun className="dark:-rotate-90 h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:scale-0" />
-					<Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+					<Sun
+						className={`h-[1.2rem] w-[1.2rem] transition-all ${
+							resolvedTheme === "dark"
+								? "-rotate-90 scale-0"
+								: "rotate-0 scale-100"
+						}`}
+					/>
+					<Moon
+						className={`absolute h-[1.2rem] w-[1.2rem] transition-all ${
+							resolvedTheme === "dark"
+								? "rotate-0 scale-100"
+								: "rotate-90 scale-0"
+						}`}
+					/>
 					<span className="sr-only">Toggle theme</span>
 				</Button>
 			</DropdownMenuTrigger>
