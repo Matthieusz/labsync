@@ -2,6 +2,7 @@ import { redirect } from "@tanstack/react-router";
 import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { ModeToggle } from "../mode-toggle";
 
 export default function UserMenu() {
 	const { data: session, isPending } = authClient.useSession();
@@ -25,7 +26,8 @@ export default function UserMenu() {
 
 	return (
 		<div className="flex items-center gap-2">
-			<div className="flex items-center gap-2 rounded-lg p-2 text-foreground hover:bg-card hover:text-foreground">
+			<ModeToggle />
+			<div className="flex items-center gap-2 rounded-lg p-2 text-foreground hover:bg-foreground/10">
 				<div>
 					{session?.user?.image ? (
 						<img src={session.user.image} alt="User Avatar" />
