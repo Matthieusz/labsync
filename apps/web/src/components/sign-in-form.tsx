@@ -16,7 +16,7 @@ export default function SignInForm() {
 	const { isPending, data: session } = authClient.useSession();
 
 	useEffect(() => {
-		if (session?.user) {
+		if (session) {
 			navigate({
 				to: "/dashboard",
 			});
