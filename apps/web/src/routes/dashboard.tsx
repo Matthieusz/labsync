@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import GroupForm from "@/components/dashboard/group-form";
+import GroupList from "@/components/dashboard/group-list";
 import Header from "@/components/dashboard/header";
 import Loader from "@/components/loader";
 import { authClient } from "@/lib/auth-client";
-import { useTRPC } from "@/utils/trpc";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
@@ -12,10 +12,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const trpc = useTRPC();
 	const { data: session, isPending } = authClient.useSession();
-
-	const privateData = useQuery(trpc.privateData.queryOptions());
 
 	useEffect(() => {
 		if (!session && !isPending) {
@@ -32,7 +29,8 @@ function RouteComponent() {
 	return (
 		<div className="min-h-screen bg-background text-foreground">
 			<Header />
-			<p>privateData: {privateData.data?.message}</p>
+			<GroupForm />
+			<GroupList />
 		</div>
 	);
 }
