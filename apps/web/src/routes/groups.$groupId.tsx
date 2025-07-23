@@ -64,17 +64,21 @@ function GroupPage() {
 					<CardHeader>
 						<div className="flex items-center justify-between">
 							<div>
-								<CardTitle className="text-3xl">{group.data?.name}</CardTitle>
+								<CardTitle className="text-3xl">
+									{group.data?.group.name}
+								</CardTitle>
 								<p className="mt-2 text-muted-foreground">
-									{group.data?.description}
+									{group.data?.group.description}
 								</p>
 							</div>
 							<div className="flex items-center gap-2">
-								<Badge variant={group.data?.isPublic ? "default" : "secondary"}>
-									{group.data?.isPublic ? "Public" : "Private"}
+								<Badge
+									variant={group.data?.group.isPublic ? "default" : "secondary"}
+								>
+									{group.data?.group.isPublic ? "Public" : "Private"}
 								</Badge>
 								<Badge variant="outline">
-									{group.data?.memberCount} members
+									{group.data?.group.memberCount} members
 								</Badge>
 							</div>
 						</div>
@@ -120,8 +124,10 @@ function GroupPage() {
 									<div>
 										<p className="text-muted-foreground text-sm">Created</p>
 										<p>
-											{group.data?.createdAt
-												? new Date(group.data.createdAt).toLocaleDateString()
+											{group.data?.group.createdAt
+												? new Date(
+														group.data?.group.createdAt,
+													).toLocaleDateString()
 												: "Unknown"}
 										</p>
 									</div>
@@ -130,8 +136,10 @@ function GroupPage() {
 											Last Updated
 										</p>
 										<p>
-											{group.data?.updatedAt
-												? new Date(group.data.updatedAt).toLocaleDateString()
+											{group.data?.group.updatedAt
+												? new Date(
+														group.data?.group.updatedAt,
+													).toLocaleDateString()
 												: "Unknown"}
 										</p>
 									</div>
