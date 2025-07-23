@@ -1,9 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod/v4";
-import { id } from "zod/v4/locales";
 import { db } from "@/db";
-import { user } from "@/db/schema/auth";
 import { group, groupMember } from "@/db/schema/group";
 import { protectedProcedure, router } from "@/lib/trpc";
 
@@ -15,39 +13,28 @@ export const groupRouter = router({
 	getById: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ input }) => {
-			const result = await db
-				.select()
-				.from(group)
-				.where(eq(group.id, input.id))
-				.limit(1);
+			const groupData = await db.query.group.findFirst({
+				where: eq(group.id, input.id),
+			});
 
-			if (result.length === 0) {
+			if (!groupData) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Group not found",
 				});
 			}
 
-			const members = await db
-				.select({
-					id: groupMember.id,
-					userId: groupMember.userId,
-					groupId: groupMember.groupId,
-					createdAt: groupMember.createdAt,
-					updatedAt: groupMember.updatedAt,
-					user: {
-						id: user.id,
-						name: user.name,
-						email: user.email,
-					},
-				})
-				.from(groupMember)
-				.leftJoin(user, eq(groupMember.userId, user.id))
-				.where(eq(groupMember.groupId, input.id));
+			const membersData = await db.query.groupMember.findMany({
+				where: eq(groupMember.groupId, input.id),
+				with: {
+					user: true,
+					group: true,
+				},
+			});
 
 			return {
-				...result[0],
-				members,
+				group: groupData,
+				members: membersData,
 			};
 		}),
 
