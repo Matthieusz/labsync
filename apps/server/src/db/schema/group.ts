@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
 	boolean,
 	integer,
@@ -18,6 +19,10 @@ export const group = pgTable("groups", {
 	updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const groupRelations = relations(group, ({ many }) => ({
+	members: many(groupMember),
+}));
+
 export const groupMember = pgTable("group_member", {
 	id: serial("id").primaryKey(),
 	groupId: text("group_id")
@@ -30,3 +35,8 @@ export const groupMember = pgTable("group_member", {
 	createdAt: timestamp("created_at").notNull(),
 	updatedAt: timestamp("updated_at").notNull(),
 });
+
+export const groupMemberRelations = relations(groupMember, ({ one }) => ({
+	group: one(group, { fields: [groupMember.groupId], references: [group.id] }),
+	user: one(user, { fields: [groupMember.userId], references: [user.id] }),
+}));
