@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { Route } from "@/routes/groups.$groupId";
 import { useTRPC } from "@/utils/trpc";
 import Loader from "../loader";
 import { Button } from "../ui/button";
@@ -15,6 +16,7 @@ import {
 export default function GroupList() {
 	const trpc = useTRPC();
 	const groups = useQuery(trpc.group.getAll.queryOptions());
+	const navigate = useNavigate({ from: Route.fullPath });
 
 	const deleteMutation = useMutation(
 		trpc.group.delete.mutationOptions({
@@ -47,6 +49,11 @@ export default function GroupList() {
 		if (confirm("Are you sure you want to join this group?")) {
 			joinMutation.mutate({ groupId: groupId });
 		}
+		toast.success("You have joined the group successfully.");
+		navigate({
+			to: "/groups/$groupId",
+			params: { groupId: groupId },
+		});
 	};
 
 	if (groups.isLoading) {
