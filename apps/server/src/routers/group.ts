@@ -88,6 +88,33 @@ export const groupRouter = router({
 			});
 		}),
 
+	removeMember: protectedProcedure
+		.input(z.object({ groupId: z.string(), userId: z.string() }))
+		.mutation(async ({ input }) => {
+			const existingMember = await db.query.groupMember.findFirst({
+				where: and(
+					eq(groupMember.userId, input.userId),
+					eq(groupMember.groupId, input.groupId),
+				),
+			});
+			if (!existingMember) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Member not found in this group",
+				});
+			}
+			await db
+				.update(group)
+				.set({
+					memberCount: sql`${group.memberCount} - 1`,
+					updatedAt: new Date(),
+				})
+				.where(eq(group.id, input.groupId));
+			return await db
+				.delete(groupMember)
+				.where(eq(groupMember.id, existingMember.id));
+		}),
+
 	update: protectedProcedure
 		.input(
 			z.object({ id: z.string(), name: z.string(), description: z.string() }),
