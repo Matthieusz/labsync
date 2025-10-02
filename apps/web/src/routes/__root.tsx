@@ -51,7 +51,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "My App",
+        title: "Labsync",
       },
     ],
     links: [
@@ -81,9 +81,7 @@ function RootDocument() {
       client={context.convexClient}
     >
       <html className="dark" lang="en">
-        <head>
-          <HeadContent />
-        </head>
+        <HeadContent />
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
