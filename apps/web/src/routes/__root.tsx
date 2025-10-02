@@ -34,11 +34,11 @@ const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
   };
 });
 
-export interface RouterAppContext {
+export type RouterAppContext = {
   queryClient: QueryClient;
   convexClient: ConvexReactClient;
   convexQueryClient: ConvexQueryClient;
-}
+};
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
