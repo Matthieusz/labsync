@@ -21,7 +21,6 @@ import type { ConvexReactClient } from "convex/react";
 import Loader from "@/components/loader";
 import { Toaster } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
-import Header from "../components/header";
 import appCss from "../index.css?url";
 
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
@@ -83,8 +82,7 @@ function RootDocument() {
       <html className="dark" lang="en">
         <HeadContent />
         <body>
-          <div className="grid h-svh grid-rows-[auto_1fr]">
-            <Header />
+          <div className="flex h-screen flex-col">
             {isFetching ? <Loader /> : <Outlet />}
           </div>
           <Toaster richColors />
