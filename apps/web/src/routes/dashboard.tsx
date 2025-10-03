@@ -1,6 +1,7 @@
 import { api } from "@labsync/backend/convex/_generated/api";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, useQuery } from "convex/react";
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,7 +65,7 @@ function RouteComponent() {
         </div>
       </Authenticated>
       <AuthLoading>
-        <div>Loading...</div>
+        <Loader />
       </AuthLoading>
     </>
   );
