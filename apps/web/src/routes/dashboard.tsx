@@ -1,16 +1,9 @@
 import { api } from "@labsync/backend/convex/_generated/api";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, useQuery } from "convex/react";
+import { Plus } from "lucide-react";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import UserMenu from "@/components/user-menu";
 
 export const Route = createFileRoute("/dashboard")({
@@ -23,7 +16,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function RouteComponent() {
-  const privateData = useQuery(api.privateData.get);
+  const user = useQuery(api.auth.getCurrentUser);
 
   return (
     <>
@@ -38,30 +31,16 @@ function RouteComponent() {
             </div>
             <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
               <div className="flex items-center gap-2">
-                <Button type="button" variant="outline">
-                  TEST
+                <Button type="button">
+                  <Plus /> Create a team
                 </Button>
-                <Button type="button">TEST 2</Button>
                 <UserMenu />
               </div>
             </div>
           </div>
-
-          {/* Private data call */}
-          <div className="mt-8">
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle>Welcome back</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                {privateData ? (
-                  <p className="text-sm">privateData: {privateData.message}</p>
-                ) : (
-                  <Skeleton className="h-5 w-64" />
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <h2 className="mt-8 font-bold text-2xl">
+            Welcome back, {user?.name}👋
+          </h2>
         </div>
       </Authenticated>
       <AuthLoading>
