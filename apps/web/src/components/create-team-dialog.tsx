@@ -42,7 +42,6 @@ export function CreateTeamDialog() {
         });
         toast.success("Organization created");
         setOpen(false);
-        // Optionally, refetch organizations list here if you cache it
       } catch (e: unknown) {
         const message =
           e instanceof Error ? e.message : "Failed to create organization";

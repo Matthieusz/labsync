@@ -1,3 +1,4 @@
+
 import { query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
 
@@ -23,17 +24,16 @@ export const listOrganizationsWithOwners = query({
             headers,
             query: { organizationId: org.id },
           });
-          const arr = Array.isArray(membersRes?.members)
-            ? membersRes.members
-            : [];
-          const owner = arr.find(
-            (m: { role: string; user?: { name?: string; email?: string } }) =>
-              m.role === "owner"
-          );
+          const arr: Array<{
+            role: string;
+            user?: { name?: string; email?: string };
+          }> = Array.isArray(membersRes?.members) ? membersRes.members : [];
+          const owner = arr.find((m) => m.role === "owner");
           return {
             id: org.id,
             name: org.name,
             slug: org.slug,
+            memberCount: arr.length,
             owner: {
               name: owner?.user?.name,
               email: owner?.user?.email,

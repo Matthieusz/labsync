@@ -122,17 +122,25 @@ function RouteComponent() {
                               {ownerLabel}
                             </dd>
                           </div>
+                          {typeof org.memberCount === "number" && (
+                            <div className="flex flex-col gap-0.5">
+                              <dt className="text-muted-foreground">Members</dt>
+                              <dd className="font-medium">{org.memberCount}</dd>
+                            </div>
+                          )}
                         </dl>
                       </CardContent>
                       <CardFooter className="justify-end">
-                        <Button
-                          disabled
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Open
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            disabled
+                            size="sm"
+                            type="button"
+                            variant="outline"
+                          >
+                            Open
+                          </Button>
+                        </div>
                       </CardFooter>
                     </Card>
                   );
