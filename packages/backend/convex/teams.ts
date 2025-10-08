@@ -1,4 +1,4 @@
-
+import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
 
@@ -46,6 +46,53 @@ export const listOrganizationsWithOwners = query({
       return {
         data: [],
         error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  },
+});
+
+export const getOrganizationMembersBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      // List organizations and find by slug
+      const orgs = await auth.api.listOrganizations({ headers });
+      if (!Array.isArray(orgs)) {
+        return { error: "Organizations response not array", data: null };
+      }
+      const org = orgs.find(
+        (o: { id: string; name: string; slug?: string }) => o.slug === args.slug
+      );
+      if (!org) {
+        return { error: "Organization not found", data: null };
+      }
+      const membersRes = await auth.api.listMembers({
+        headers,
+        query: { organizationId: org.id },
+      });
+      const members: Array<{
+        role: string;
+        user?: { name?: string; email?: string; id?: string };
+      }> = Array.isArray(membersRes?.members) ? membersRes.members : [];
+      return {
+        error: undefined,
+        data: {
+          id: org.id,
+          name: org.name,
+          slug: org.slug,
+          members: members.map((m) => ({
+            role: m.role,
+            name: m.user?.name,
+            email: m.user?.email,
+            userId: m.user?.id,
+          })),
+        },
+      };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
       };
     }
   },

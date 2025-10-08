@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import UserMenu from "@/components/user-menu";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
   beforeLoad: ({ context }) => {
     if (!context.userId) {
@@ -132,14 +132,26 @@ function RouteComponent() {
                       </CardContent>
                       <CardFooter className="justify-end">
                         <div className="flex gap-2">
-                          <Button
-                            disabled
-                            size="sm"
-                            type="button"
-                            variant="outline"
-                          >
-                            Open
-                          </Button>
+                          {org.slug ? (
+                            <Link
+                              params={{ orgSlug: org.slug }}
+                              preload="intent"
+                              to="/dashboard/$orgSlug"
+                            >
+                              <Button size="sm" type="button" variant="outline">
+                                Open
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Button
+                              disabled
+                              size="sm"
+                              type="button"
+                              variant="outline"
+                            >
+                              Open
+                            </Button>
+                          )}
                         </div>
                       </CardFooter>
                     </Card>
