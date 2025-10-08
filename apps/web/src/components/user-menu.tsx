@@ -9,12 +9,12 @@ export default function UserMenu() {
   return (
     <div className="flex items-center gap-2">
       <Button
-        onClick={() => {
-          authClient.signOut({
+        onClick={async () => {
+          await authClient.signOut({
             fetchOptions: {
               onSuccess: () => {
                 navigate({
-                  to: "/dashboard",
+                  to: "/",
                 });
               },
             },
