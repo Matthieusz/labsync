@@ -1,11 +1,8 @@
+import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@labsync/backend/convex/_generated/api";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import {
-  Authenticated,
-  AuthLoading,
-  Unauthenticated,
-  useQuery,
-} from "convex/react";
+import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogIn, Plus } from "lucide-react";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -21,7 +18,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function RouteComponent() {
-  const user = useQuery(api.auth.getCurrentUser);
+  const user = useSuspenseQuery(convexQuery(api.auth.getCurrentUser, {}));
 
   return (
     <>
@@ -44,7 +41,7 @@ function RouteComponent() {
             </div>
           </div>
           <h2 className="mt-8 font-bold text-2xl">
-            Welcome back, {user?.name}👋
+            Welcome back, {user?.data?.name}👋
           </h2>
         </div>
       </Authenticated>
