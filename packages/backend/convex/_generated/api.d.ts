@@ -16,6 +16,7 @@ import type * as betterAuth_auth from "../betterAuth/auth.js";
 import type * as betterAuth_generatedSchema from "../betterAuth/generatedSchema.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
+import type * as messages from "../messages.js";
 import type * as privateData from "../privateData.js";
 import type * as teams from "../teams.js";
 import type * as todos from "../todos.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   "betterAuth/generatedSchema": typeof betterAuth_generatedSchema;
   healthCheck: typeof healthCheck;
   http: typeof http;
+  messages: typeof messages;
   privateData: typeof privateData;
   teams: typeof teams;
   todos: typeof todos;
