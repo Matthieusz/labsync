@@ -12,6 +12,7 @@ import {
 import { ArrowDown } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CreateTeamDialog from "@/components/create-team-dialog";
+import InviteUserDialog from "@/components/invite-user-dialog";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,7 +107,6 @@ function OrgRouteComponent() {
       try {
         container.scrollTo({ top: container.scrollHeight, behavior });
       } catch {
-        // Fallback for environments without smooth options
         container.scrollTop = container.scrollHeight;
       }
       return;
@@ -116,7 +116,6 @@ function OrgRouteComponent() {
 
   const lastMessageId = messages.at(-1)?._id;
 
-  // Ensure we start from the latest message on initial load/refresh
   const didInitialScroll = useRef(false);
   useEffect(() => {
     if (
@@ -124,20 +123,17 @@ function OrgRouteComponent() {
       messages.length > 0 &&
       scrollContainerRef.current
     ) {
-      // Wait for layout to settle to ensure measurements are correct
       const scrollToLatest = () => {
         scrollToBottom("auto");
         didInitialScroll.current = true;
       };
 
-      // Multiple strategies to ensure reliable scroll to bottom
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           requestAnimationFrame(scrollToLatest);
         });
       });
 
-      // Fallback timeout in case RAF doesn't work
       const timeoutId = setTimeout(scrollToLatest, SCROLL_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
@@ -210,7 +206,13 @@ function OrgRouteComponent() {
             <section className="mt-8 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Members</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Members</CardTitle>
+                    <InviteUserDialog
+                      organizationId={result.data.id}
+                      organizationName={result.data.name || orgSlug}
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {result.data.members.length === 0 ? (

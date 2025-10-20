@@ -6,6 +6,7 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogIn } from "lucide-react";
 import CreateTeamDialog from "@/components/create-team-dialog";
 import Loader from "@/components/loader";
+import PendingInvitations from "@/components/pending-invitations";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -49,6 +50,9 @@ function RouteComponent() {
               </div>
             </div>
           </div>
+
+          {/* Pending Invitations */}
+          <PendingInvitations />
 
           {/* Organizations List */}
           <section className="mt-8">

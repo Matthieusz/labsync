@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
 
 export const listOrganizationsWithOwners = query({
@@ -136,6 +136,124 @@ export const getOrganizationMembersById = query({
           })),
         },
       };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const inviteMemberToOrganization = mutation({
+  args: { organizationId: v.string(), email: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      // Invite member to organization
+      const inviteRes = await auth.api.createInvitation({
+        headers,
+        body: {
+          organizationId: args.organizationId,
+          email: args.email,
+          role: "member",
+        },
+      });
+      return { error: undefined, data: inviteRes };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const listPendingInvitations = query({
+  args: {},
+  handler: async (ctx) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+
+      const user = await auth.api.getSession({ headers });
+      if (!user?.user?.email) {
+        return { error: "User email not found", data: null };
+      }
+
+      const invitations = await auth.api.listUserInvitations({
+        headers,
+        query: {
+          email: user.user.email,
+        },
+      });
+
+      const orgs = await auth.api.listOrganizations({ headers });
+      const orgMap: Record<string, { name: string; slug?: string }> = {};
+
+      if (Array.isArray(orgs)) {
+        for (const org of orgs) {
+          orgMap[org.id] = { name: org.name, slug: org.slug };
+        }
+      }
+
+      const enhancedInvitations = Array.isArray(invitations)
+        ? invitations.map(
+            (invitation: {
+              organizationId: string;
+              [key: string]: unknown;
+            }) => ({
+              ...invitation,
+              organizationName:
+                orgMap[invitation.organizationId]?.name ||
+                "Unknown Organization",
+              organizationSlug: orgMap[invitation.organizationId]?.slug,
+            })
+          )
+        : [];
+
+      return { error: undefined, data: enhancedInvitations };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const acceptInvitation = mutation({
+  args: { invitationId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      const result = await auth.api.acceptInvitation({
+        headers,
+        body: {
+          invitationId: args.invitationId,
+        },
+      });
+      return { error: undefined, data: result };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const rejectInvitation = mutation({
+  args: { invitationId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      const result = await auth.api.rejectInvitation({
+        headers,
+        body: {
+          invitationId: args.invitationId,
+        },
+      });
+      return { error: undefined, data: result };
     } catch (err) {
       return {
         error: err instanceof Error ? err.message : String(err),
