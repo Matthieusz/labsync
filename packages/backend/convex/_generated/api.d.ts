@@ -134,6 +134,7 @@ export declare const components: {
                   createdAt: number;
                   name: string;
                   organizationId: string;
+                  password: string;
                   updatedAt?: null | number;
                 };
                 model: "team";
@@ -152,7 +153,7 @@ export declare const components: {
                   logo?: null | string;
                   metadata?: null | string;
                   name: string;
-                  slug?: null | string;
+                  slug: string;
                 };
                 model: "organization";
               }
@@ -363,6 +364,7 @@ export declare const components: {
                     | "organizationId"
                     | "createdAt"
                     | "updatedAt"
+                    | "password"
                     | "_id";
                   operator?:
                     | "lt"
@@ -701,6 +703,7 @@ export declare const components: {
                     | "organizationId"
                     | "createdAt"
                     | "updatedAt"
+                    | "password"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1168,6 +1171,7 @@ export declare const components: {
                   createdAt?: number;
                   name?: string;
                   organizationId?: string;
+                  password?: string;
                   updatedAt?: null | number;
                 };
                 where?: Array<{
@@ -1177,6 +1181,7 @@ export declare const components: {
                     | "organizationId"
                     | "createdAt"
                     | "updatedAt"
+                    | "password"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1237,7 +1242,7 @@ export declare const components: {
                   logo?: null | string;
                   metadata?: null | string;
                   name?: string;
-                  slug?: null | string;
+                  slug?: string;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";
@@ -1585,6 +1590,7 @@ export declare const components: {
                   createdAt?: number;
                   name?: string;
                   organizationId?: string;
+                  password?: string;
                   updatedAt?: null | number;
                 };
                 where?: Array<{
@@ -1594,6 +1600,7 @@ export declare const components: {
                     | "organizationId"
                     | "createdAt"
                     | "updatedAt"
+                    | "password"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1654,7 +1661,7 @@ export declare const components: {
                   logo?: null | string;
                   metadata?: null | string;
                   name?: string;
-                  slug?: null | string;
+                  slug?: string;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";

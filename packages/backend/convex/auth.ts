@@ -40,6 +40,17 @@ export const createAuth = (
           enabled: true,
           allowRemovingAllTeams: true,
         },
+        schema: {
+          team: {
+            additionalFields: {
+              password: {
+                type: "string",
+                input: true,
+                required: true,
+              },
+            },
+          },
+        },
         organizationHooks: {
           afterCreateOrganization: async ({ organization: org }) => {
             const { auth, headers } = await authComponent.getAuth(

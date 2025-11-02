@@ -104,6 +104,7 @@ export type Mounts = {
                 createdAt: number;
                 name: string;
                 organizationId: string;
+                password: string;
                 updatedAt?: null | number;
               };
               model: "team";
@@ -122,7 +123,7 @@ export type Mounts = {
                 logo?: null | string;
                 metadata?: null | string;
                 name: string;
-                slug?: null | string;
+                slug: string;
               };
               model: "organization";
             }
@@ -333,6 +334,7 @@ export type Mounts = {
                   | "organizationId"
                   | "createdAt"
                   | "updatedAt"
+                  | "password"
                   | "_id";
                 operator?:
                   | "lt"
@@ -671,6 +673,7 @@ export type Mounts = {
                   | "organizationId"
                   | "createdAt"
                   | "updatedAt"
+                  | "password"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1138,6 +1141,7 @@ export type Mounts = {
                 createdAt?: number;
                 name?: string;
                 organizationId?: string;
+                password?: string;
                 updatedAt?: null | number;
               };
               where?: Array<{
@@ -1147,6 +1151,7 @@ export type Mounts = {
                   | "organizationId"
                   | "createdAt"
                   | "updatedAt"
+                  | "password"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1207,7 +1212,7 @@ export type Mounts = {
                 logo?: null | string;
                 metadata?: null | string;
                 name?: string;
-                slug?: null | string;
+                slug?: string;
               };
               where?: Array<{
                 connector?: "AND" | "OR";
@@ -1555,6 +1560,7 @@ export type Mounts = {
                 createdAt?: number;
                 name?: string;
                 organizationId?: string;
+                password?: string;
                 updatedAt?: null | number;
               };
               where?: Array<{
@@ -1564,6 +1570,7 @@ export type Mounts = {
                   | "organizationId"
                   | "createdAt"
                   | "updatedAt"
+                  | "password"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1624,7 +1631,7 @@ export type Mounts = {
                 logo?: null | string;
                 metadata?: null | string;
                 name?: string;
-                slug?: null | string;
+                slug?: string;
               };
               where?: Array<{
                 connector?: "AND" | "OR";
