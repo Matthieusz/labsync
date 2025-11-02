@@ -2,6 +2,86 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
 
+export const listTeamsByOrganization = query({
+  args: { organizationId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      // List teams for the organization
+      const teamsRes = await auth.api.listOrganizationTeams({
+        headers,
+        query: { organizationId: args.organizationId },
+      });
+      const teams: Array<{
+        id: string;
+        name: string;
+        createdAt?: number;
+      }> = Array.isArray(teamsRes)
+        ? teamsRes.map((team) => ({
+            id: team.id,
+            name: team.name,
+            createdAt:
+              team.createdAt instanceof Date
+                ? team.createdAt.getTime()
+                : undefined,
+          }))
+        : [];
+      return { error: undefined, data: teams };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const createTeamInOrganization = mutation({
+  args: { organizationId: v.string(), name: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      // Create team in organization
+      const teamRes = await auth.api.createTeam({
+        headers,
+        body: {
+          organizationId: args.organizationId,
+          name: args.name,
+        },
+      });
+      return { error: undefined, data: teamRes };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const createOrganization = mutation({
+  args: { name: v.string(), slug: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+      // Create organization
+      const orgRes = await auth.api.createOrganization({
+        headers,
+        body: {
+          name: args.name,
+          slug: args.slug,
+        },
+      });
+      return { error: undefined, data: orgRes };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
 export const listOrganizationsWithOwners = query({
   args: {},
   handler: async (ctx) => {
@@ -17,7 +97,6 @@ export const listOrganizationsWithOwners = query({
           error: "Failed to fetch organizations: orgs is not an array",
         };
       }
-      // For each org, fetch members and find the owner
       const results = await Promise.all(
         orgs.map(async (org: { id: string; name: string; slug?: string }) => {
           const membersRes = await auth.api.listMembers({

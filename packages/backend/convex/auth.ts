@@ -38,6 +38,31 @@ export const createAuth = (
       organization({
         teams: {
           enabled: true,
+          allowRemovingAllTeams: true,
+        },
+        organizationHooks: {
+          afterCreateOrganization: async ({ organization: org }) => {
+            const { auth, headers } = await authComponent.getAuth(
+              createAuth,
+              ctx
+            );
+            const teams = await auth.api.listOrganizationTeams({
+              headers,
+              query: { organizationId: org.id },
+            });
+
+            if (Array.isArray(teams)) {
+              for (const team of teams) {
+                await auth.api.removeTeam({
+                  headers,
+                  body: {
+                    teamId: team.id,
+                    organizationId: org.id,
+                  },
+                });
+              }
+            }
+          },
         },
       }),
     ],

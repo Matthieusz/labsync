@@ -9,11 +9,11 @@ import {
   Unauthenticated,
   useMutation,
 } from "convex/react";
-import { ArrowDown } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import CreateTeamDialog from "@/components/create-team-dialog";
-import InviteUserDialog from "@/components/invite-user-dialog";
 import Loader from "@/components/loader";
+import { MemberList } from "@/components/member-list";
+import { TeamList } from "@/components/team-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,8 +31,14 @@ export const Route = createFileRoute("/dashboard/$orgSlug")({
 function OrgRouteComponent() {
   const { orgSlug } = Route.useParams();
   const context = Route.useRouteContext();
+
   const { data: result } = useSuspenseQuery(
     convexQuery(api.teams.getOrganizationMembersBySlug, { slug: orgSlug })
+  );
+  const orgId = result?.data?.id || "";
+
+  const { data: userTeamsRaw } = useSuspenseQuery(
+    convexQuery(api.teams.listTeamsByOrganization, { organizationId: orgId })
   );
 
   const { data: messagesResult } = useSuspenseQuery(
@@ -99,80 +105,6 @@ function OrgRouteComponent() {
     }
   }, []);
 
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      try {
-        container.scrollTo({ top: container.scrollHeight, behavior });
-      } catch {
-        container.scrollTop = container.scrollHeight;
-      }
-      return;
-    }
-    bottomRef.current?.scrollIntoView({ behavior, block: "end" });
-  }, []);
-
-  const lastMessageId = messages.at(-1)?._id;
-
-  const didInitialScroll = useRef(false);
-  useEffect(() => {
-    if (
-      !didInitialScroll.current &&
-      messages.length > 0 &&
-      scrollContainerRef.current
-    ) {
-      const scrollToLatest = () => {
-        scrollToBottom("auto");
-        didInitialScroll.current = true;
-      };
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(scrollToLatest);
-        });
-      });
-
-      const timeoutId = setTimeout(scrollToLatest, SCROLL_DELAY_MS);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [messages.length, scrollToBottom]);
-
-  const [isNearBottom, setIsNearBottom] = useState(true);
-  const [forceScroll, setForceScroll] = useState(false);
-  const NEAR_BOTTOM_PX = 80;
-  const SCROLL_DELAY_MS = 100;
-
-  const evaluateNearBottom = useCallback(() => {
-    const el = scrollContainerRef.current;
-    if (!el) {
-      return true;
-    }
-    const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
-    return distance <= NEAR_BOTTOM_PX;
-  }, []);
-
-  const handleScroll = useCallback(() => {
-    setIsNearBottom(evaluateNearBottom());
-  }, [evaluateNearBottom]);
-
-  useEffect(() => {
-    setIsNearBottom(evaluateNearBottom());
-  }, [evaluateNearBottom]);
-
-  useEffect(() => {
-    if (!lastMessageId) {
-      return;
-    }
-    if (forceScroll || isNearBottom) {
-      scrollToBottom("smooth");
-      if (forceScroll) {
-        setForceScroll(false);
-      }
-    }
-  }, [lastMessageId, forceScroll, isNearBottom, scrollToBottom]);
-
   return (
     <>
       <Authenticated>
@@ -189,7 +121,7 @@ function OrgRouteComponent() {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <CreateTeamDialog />
+              <CreateTeamDialog organizationId={orgId} />
               <UserMenu />
             </div>
           </div>
@@ -204,47 +136,8 @@ function OrgRouteComponent() {
 
           {result.data ? (
             <section className="mt-8 space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Members</CardTitle>
-                    <InviteUserDialog
-                      organizationId={result.data.id}
-                      organizationName={result.data.name || orgSlug}
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {result.data.members.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">
-                      No members found.
-                    </p>
-                  ) : (
-                    <ul className="divide-y rounded-md border">
-                      {result.data.members.map((m) => (
-                        <li
-                          className="flex flex-col gap-1 px-4 py-3 text-sm"
-                          key={m.userId || m.email}
-                        >
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="font-medium">
-                              {m.name || m.email || "Unknown"}
-                            </span>
-                            <span className="bg-muted px-2 py-0.5 text-xs capitalize">
-                              {m.role}
-                            </span>
-                          </div>
-                          {m.email && (
-                            <span className="text-muted-foreground text-xs">
-                              {m.email}
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </CardContent>
-              </Card>
+              <MemberList orgSlug={orgSlug} result={result} />
+              <TeamList result={{ data: userTeamsRaw?.data ?? [] }} />
 
               <Card className="mt-8">
                 <CardHeader>
@@ -255,25 +148,9 @@ function OrgRouteComponent() {
                     aria-live="polite"
                     aria-relevant="additions"
                     className="scrollbar-hidden relative flex h-80 max-h-96 flex-col overflow-y-auto rounded-md border bg-muted/30 p-2"
-                    onScroll={handleScroll}
-                    ref={scrollContainerRef}
                     role="log"
                     style={{ scrollBehavior: "smooth" }}
                   >
-                    {!isNearBottom && messages.length > 0 ? (
-                      <div className="sticky bottom-2 z-10 flex justify-center">
-                        <Button
-                          aria-label="Scroll to latest messages"
-                          className="shadow"
-                          onClick={() => scrollToBottom("smooth")}
-                          size="icon"
-                          type="button"
-                        >
-                          <ArrowDown />
-                        </Button>
-                      </div>
-                    ) : null}
-
                     {messages.length ? (
                       <ul className="flex flex-col gap-3">
                         {messages.map((msg) => {
@@ -311,9 +188,6 @@ function OrgRouteComponent() {
                             </li>
                           );
                         })}
-                        <li aria-hidden="true" className="m-0 h-px p-0">
-                          <div ref={bottomRef} />
-                        </li>
                       </ul>
                     ) : (
                       <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
@@ -328,9 +202,7 @@ function OrgRouteComponent() {
                     onSubmit={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setForceScroll(true);
                       form.handleSubmit();
-                      scrollToBottom("smooth");
                     }}
                   >
                     <form.Field name="content">

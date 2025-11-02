@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogIn } from "lucide-react";
-import CreateTeamDialog from "@/components/create-team-dialog";
+import CreateTeamDialog from "@/components/create-organization-dialog";
 import Loader from "@/components/loader";
 import PendingInvitations from "@/components/pending-invitations";
 import { Button } from "@/components/ui/button";
@@ -108,7 +108,7 @@ function RouteComponent() {
                         <dl className="grid grid-cols-1 gap-3 text-xs">
                           <div className="flex flex-col gap-0.5">
                             <dt className="text-muted-foreground">Name</dt>
-                            <dd className="break-words font-medium">
+                            <dd className="wrap-break-word font-medium">
                               {org.name}
                             </dd>
                           </div>
@@ -122,7 +122,7 @@ function RouteComponent() {
                           )}
                           <div className="flex flex-col gap-0.5">
                             <dt className="text-muted-foreground">Owner</dt>
-                            <dd className="break-words font-medium">
+                            <dd className="wrap-break-word font-medium">
                               {ownerLabel}
                             </dd>
                           </div>

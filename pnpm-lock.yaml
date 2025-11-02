@@ -3469,9 +3469,6 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.1.11:
-    resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
-
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
@@ -6597,12 +6594,12 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  trpc-cli@0.11.0(@trpc/server@11.6.0(typescript@5.9.3))(zod@4.1.11):
+  trpc-cli@0.11.0(@trpc/server@11.6.0(typescript@5.9.3))(zod@4.1.12):
     dependencies:
       commander: 14.0.1
     optionalDependencies:
       '@trpc/server': 11.6.0(typescript@5.9.3)
-      zod: 4.1.11
+      zod: 4.1.12
 
   tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
@@ -6665,9 +6662,9 @@ snapshots:
       deepmerge: 4.3.1
       jsonc-parser: 3.3.1
       nypm: 0.6.2
-      trpc-cli: 0.11.0(@trpc/server@11.6.0(typescript@5.9.3))(zod@4.1.11)
+      trpc-cli: 0.11.0(@trpc/server@11.6.0(typescript@5.9.3))(zod@4.1.12)
       vitest: 3.2.4(@types/node@24.9.2)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(tsx@4.20.6)
-      zod: 4.1.11
+      zod: 4.1.12
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@orpc/server'
@@ -6867,7 +6864,5 @@ snapshots:
   yallist@3.1.1: {}
 
   zod@3.25.76: {}
-
-  zod@4.1.11: {}
 
   zod@4.1.12: {}
