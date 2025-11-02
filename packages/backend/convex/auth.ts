@@ -6,6 +6,7 @@ import { organization } from "better-auth/plugins/organization";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
+import { ac, member } from "./betterAuth/permissions";
 import authSchema from "./betterAuth/schema";
 
 const siteUrl = process.env.SITE_URL as string;
@@ -36,6 +37,10 @@ export const createAuth = (
     plugins: [
       convex(),
       organization({
+        ac,
+        roles: {
+          member,
+        },
         teams: {
           enabled: true,
           allowRemovingAllTeams: true,

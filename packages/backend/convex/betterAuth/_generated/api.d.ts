@@ -11,6 +11,7 @@
 import type * as adapter from "../adapter.js";
 import type * as auth from "../auth.js";
 import type * as generatedSchema from "../generatedSchema.js";
+import type * as permissions from "../permissions.js";
 
 import type {
   ApiFromModules,
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   adapter: typeof adapter;
   auth: typeof auth;
   generatedSchema: typeof generatedSchema;
+  permissions: typeof permissions;
 }>;
 export type Mounts = {
   adapter: {
