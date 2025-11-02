@@ -1,4 +1,4 @@
-import { hashPassword } from "better-auth/crypto";
+import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
@@ -387,7 +387,6 @@ export const joinTeamWithPassword = mutation({
       }
 
       // Verify password (the team should have a hashed password stored)
-      const { verifyPassword } = await import("better-auth/crypto");
       const isValid = await verifyPassword({
         password: args.password,
         hash: team.password,
