@@ -37,7 +37,7 @@ function TeamRouteComponent() {
 
   // Team details
   const { data: orgResult } = useSuspenseQuery(
-    convexQuery(api.teams.getOrganizationMembersBySlug, { slug: orgSlug })
+    convexQuery(api.organizations.getOrganizationMembersBySlug, { slug: orgSlug })
   );
   const organizationId = orgResult?.data?.id ?? "";
   const organizationName = orgResult?.data?.name ?? orgSlug;

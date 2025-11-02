@@ -32,7 +32,9 @@ function OrgRouteComponent() {
   const context = Route.useRouteContext();
 
   const { data: result } = useSuspenseQuery(
-    convexQuery(api.teams.getOrganizationMembersBySlug, { slug: orgSlug })
+    convexQuery(api.organizations.getOrganizationMembersBySlug, {
+      slug: orgSlug,
+    })
   );
   const orgId = result?.data?.id || "";
 

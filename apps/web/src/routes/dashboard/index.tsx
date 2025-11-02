@@ -39,7 +39,7 @@ function RouteComponent() {
   const navigate = useNavigate();
   const [loadingOrgId, setLoadingOrgId] = useState<string | null>(null);
   const { data: orgs } = useSuspenseQuery(
-    convexQuery(api.teams.listOrganizationsWithOwners, {})
+    convexQuery(api.organizations.listOrganizationsWithOwners, {})
   );
   const orgList = orgs.data;
 

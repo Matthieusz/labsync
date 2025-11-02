@@ -31,11 +31,11 @@ type Invitation = {
 
 export function PendingInvitations() {
   const { data: invitationsResult } = useSuspenseQuery(
-    convexQuery(api.teams.listPendingInvitations, {})
+    convexQuery(api.organizations.listPendingInvitations, {})
   );
 
-  const acceptInvitation = useMutation(api.teams.acceptInvitation);
-  const rejectInvitation = useMutation(api.teams.rejectInvitation);
+  const acceptInvitation = useMutation(api.organizations.acceptInvitation);
+  const rejectInvitation = useMutation(api.organizations.rejectInvitation);
 
   const handleAcceptInvitation = async (invitationId: string) => {
     try {
