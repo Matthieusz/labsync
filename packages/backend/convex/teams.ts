@@ -398,7 +398,6 @@ export const joinTeamWithPassword = mutation({
 
       // Add user to team
       const result = await auth.api.addTeamMember({
-        headers,
         body: {
           teamId: args.teamId,
           userId: session.user.id,

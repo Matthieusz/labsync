@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import CreateTeamDialog from "./create-team-dialog";
+import JoinTeamDialog from "./join-team-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 type Team = {
@@ -35,6 +36,12 @@ export const TeamList = ({ orgSlug, result }: TeamListProps) => (
                 >
                   {team.name}
                 </Link>
+                <JoinTeamDialog
+                  organizationId={result.organizationId}
+                  orgSlug={orgSlug}
+                  teamId={team.id}
+                  teamName={team.name}
+                />
               </div>
             </li>
           ))}

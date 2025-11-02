@@ -1,9 +1,16 @@
 import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@labsync/backend/convex/_generated/api";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogIn } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import CreateTeamDialog from "@/components/create-organization-dialog";
 import Loader from "@/components/loader";
 import PendingInvitations from "@/components/pending-invitations";
@@ -17,6 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import UserMenu from "@/components/user-menu";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
@@ -28,10 +36,41 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
+  const [loadingOrgId, setLoadingOrgId] = useState<string | null>(null);
   const { data: orgs } = useSuspenseQuery(
     convexQuery(api.teams.listOrganizationsWithOwners, {})
   );
   const orgList = orgs.data;
+
+  const handleOpenOrganization = async (orgId: string, orgSlug: string) => {
+    setLoadingOrgId(orgId);
+    try {
+      const result = await authClient.organization.setActive({
+        organizationId: orgId,
+        organizationSlug: orgSlug,
+      });
+
+      if (result.error) {
+        toast.error(
+          result.error.message || "Failed to set active organization"
+        );
+        return;
+      }
+
+      await navigate({
+        to: "/dashboard/$orgSlug",
+        params: { orgSlug },
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to open organization"
+      );
+    } finally {
+      setLoadingOrgId(null);
+    }
+  };
+
   return (
     <>
       <Authenticated>
@@ -137,15 +176,17 @@ function RouteComponent() {
                       <CardFooter className="justify-end">
                         <div className="flex gap-2">
                           {org.slug ? (
-                            <Link
-                              params={{ orgSlug: org.slug }}
-                              preload="intent"
-                              to="/dashboard/$orgSlug"
+                            <Button
+                              disabled={loadingOrgId === org.id}
+                              onClick={() =>
+                                handleOpenOrganization(org.id, org.slug || "")
+                              }
+                              size="sm"
+                              type="button"
+                              variant="outline"
                             >
-                              <Button size="sm" type="button" variant="outline">
-                                Open
-                              </Button>
-                            </Link>
+                              {loadingOrgId === org.id ? "Opening..." : "Open"}
+                            </Button>
                           ) : (
                             <Button
                               disabled
