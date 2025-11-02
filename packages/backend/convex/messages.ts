@@ -1,14 +1,38 @@
+export const getMessagesByTeam = query({
+  args: { teamId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const messages = await ctx.db
+        .query("messages")
+        .withIndex("byTeam", (q) => q.eq("teamId", args.teamId))
+        .collect();
+      return { data: messages, error: undefined };
+    } catch (err) {
+      return {
+        data: [],
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  },
+});
+
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const createMessage = mutation({
-  args: { content: v.string(), userId: v.string(), organizationId: v.string() },
+  args: {
+    content: v.string(),
+    userId: v.string(),
+    organizationId: v.optional(v.string()),
+    teamId: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
     try {
       const newMessage = await ctx.db.insert("messages", {
         content: args.content,
         userId: args.userId,
-        organizationId: args.organizationId,
+        organizationId: args.organizationId ?? undefined,
+        teamId: args.teamId ?? undefined,
       });
       return { data: newMessage, error: undefined };
     } catch (err) {

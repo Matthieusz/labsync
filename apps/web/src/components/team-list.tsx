@@ -1,19 +1,21 @@
+import { Link } from "@tanstack/react-router";
+import CreateTeamDialog from "./create-team-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+
 type Team = {
   id: string;
   name: string;
 };
 
-type TeamCardProps = {
+type TeamListProps = {
+  orgSlug: string;
   result: {
     organizationId: string;
     data: Team[];
   };
 };
 
-import CreateTeamDialog from "./create-team-dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-
-export const TeamList = ({ result }: TeamCardProps) => (
+export const TeamList = ({ orgSlug, result }: TeamListProps) => (
   <Card>
     <CardHeader className="flex items-center justify-between">
       <CardTitle className="text-base">Your Teams</CardTitle>
@@ -25,7 +27,14 @@ export const TeamList = ({ result }: TeamCardProps) => (
           {result.data.map((team) => (
             <li className="flex flex-col gap-1 px-4 py-3 text-sm" key={team.id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-medium">{team.name}</span>
+                <Link
+                  className="font-medium text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  params={{ orgSlug, teamId: team.id }}
+                  preload="intent"
+                  to="/dashboard/$orgSlug/$teamId"
+                >
+                  {team.name}
+                </Link>
               </div>
             </li>
           ))}

@@ -12,7 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodosRouteImport } from './routes/todos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardOrgSlugRouteImport } from './routes/dashboard/$orgSlug'
+import { Route as DashboardOrgSlugIndexRouteImport } from './routes/dashboard/$orgSlug/index'
+import { Route as DashboardOrgSlugTeamIdRouteImport } from './routes/dashboard/$orgSlug/$teamId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const TodosRoute = TodosRouteImport.update({
@@ -30,9 +31,14 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardOrgSlugRoute = DashboardOrgSlugRouteImport.update({
-  id: '/dashboard/$orgSlug',
-  path: '/dashboard/$orgSlug',
+const DashboardOrgSlugIndexRoute = DashboardOrgSlugIndexRouteImport.update({
+  id: '/dashboard/$orgSlug/',
+  path: '/dashboard/$orgSlug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardOrgSlugTeamIdRoute = DashboardOrgSlugTeamIdRouteImport.update({
+  id: '/dashboard/$orgSlug/$teamId',
+  path: '/dashboard/$orgSlug/$teamId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -44,50 +50,62 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
-  '/dashboard/$orgSlug': typeof DashboardOrgSlugRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/$orgSlug/$teamId': typeof DashboardOrgSlugTeamIdRoute
+  '/dashboard/$orgSlug': typeof DashboardOrgSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
-  '/dashboard/$orgSlug': typeof DashboardOrgSlugRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/$orgSlug/$teamId': typeof DashboardOrgSlugTeamIdRoute
+  '/dashboard/$orgSlug': typeof DashboardOrgSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
-  '/dashboard/$orgSlug': typeof DashboardOrgSlugRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/$orgSlug/$teamId': typeof DashboardOrgSlugTeamIdRoute
+  '/dashboard/$orgSlug/': typeof DashboardOrgSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/todos'
-    | '/dashboard/$orgSlug'
     | '/dashboard'
     | '/api/auth/$'
+    | '/dashboard/$orgSlug/$teamId'
+    | '/dashboard/$orgSlug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/todos' | '/dashboard/$orgSlug' | '/dashboard' | '/api/auth/$'
+  to:
+    | '/'
+    | '/todos'
+    | '/dashboard'
+    | '/api/auth/$'
+    | '/dashboard/$orgSlug/$teamId'
+    | '/dashboard/$orgSlug'
   id:
     | '__root__'
     | '/'
     | '/todos'
-    | '/dashboard/$orgSlug'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/dashboard/$orgSlug/$teamId'
+    | '/dashboard/$orgSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TodosRoute: typeof TodosRoute
-  DashboardOrgSlugRoute: typeof DashboardOrgSlugRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  DashboardOrgSlugTeamIdRoute: typeof DashboardOrgSlugTeamIdRoute
+  DashboardOrgSlugIndexRoute: typeof DashboardOrgSlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -113,11 +131,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/$orgSlug': {
-      id: '/dashboard/$orgSlug'
+    '/dashboard/$orgSlug/': {
+      id: '/dashboard/$orgSlug/'
       path: '/dashboard/$orgSlug'
       fullPath: '/dashboard/$orgSlug'
-      preLoaderRoute: typeof DashboardOrgSlugRouteImport
+      preLoaderRoute: typeof DashboardOrgSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/$orgSlug/$teamId': {
+      id: '/dashboard/$orgSlug/$teamId'
+      path: '/dashboard/$orgSlug/$teamId'
+      fullPath: '/dashboard/$orgSlug/$teamId'
+      preLoaderRoute: typeof DashboardOrgSlugTeamIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -133,9 +158,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TodosRoute: TodosRoute,
-  DashboardOrgSlugRoute: DashboardOrgSlugRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  DashboardOrgSlugTeamIdRoute: DashboardOrgSlugTeamIdRoute,
+  DashboardOrgSlugIndexRoute: DashboardOrgSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
 
-export const Route = createFileRoute("/dashboard/$orgSlug")({
+export const Route = createFileRoute("/dashboard/$orgSlug/")({
   beforeLoad: ({ context }) => {
     if (!context.userId) {
       throw redirect({ to: "/" });
@@ -136,6 +136,7 @@ function OrgRouteComponent() {
             <section className="mt-8 space-y-6">
               <MemberList orgSlug={orgSlug} result={result} />
               <TeamList
+                orgSlug={orgSlug}
                 result={{
                   data: userTeamsRaw?.data ?? [],
                   organizationId: orgId,

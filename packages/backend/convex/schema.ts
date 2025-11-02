@@ -9,6 +9,9 @@ export default defineSchema({
   messages: defineTable({
     content: v.string(),
     userId: v.string(),
-    organizationId: v.string(),
-  }).index("byOrganization", ["organizationId"]),
+    organizationId: v.optional(v.string()),
+    teamId: v.optional(v.string()),
+  })
+    .index("byOrganization", ["organizationId"])
+    .index("byTeam", ["teamId"]),
 });
