@@ -26,7 +26,7 @@ export const createAuth = (
     logger: {
       disabled: optionsOnly,
     },
-    baseUrl: siteUrl,
+    baseURL: siteUrl,
     trustedOrigins: [siteUrl],
     database: authComponent.adapter(ctx),
     emailAndPassword: {
