@@ -5,16 +5,19 @@ type Team = {
 
 type TeamCardProps = {
   result: {
+    organizationId: string;
     data: Team[];
   };
 };
 
+import CreateTeamDialog from "./create-team-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export const TeamList = ({ result }: TeamCardProps) => (
   <Card>
-    <CardHeader>
+    <CardHeader className="flex items-center justify-between">
       <CardTitle className="text-base">Your Teams</CardTitle>
+      <CreateTeamDialog organizationId={result.organizationId} />
     </CardHeader>
     <CardContent>
       {Array.isArray(result.data) && result.data.length > 0 ? (

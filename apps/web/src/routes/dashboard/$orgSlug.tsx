@@ -10,7 +10,6 @@ import {
   useMutation,
 } from "convex/react";
 import { useCallback, useMemo } from "react";
-import CreateTeamDialog from "@/components/create-team-dialog";
 import Loader from "@/components/loader";
 import { MemberList } from "@/components/member-list";
 import { TeamList } from "@/components/team-list";
@@ -121,7 +120,6 @@ function OrgRouteComponent() {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <CreateTeamDialog organizationId={orgId} />
               <UserMenu />
             </div>
           </div>
@@ -137,7 +135,12 @@ function OrgRouteComponent() {
           {result.data ? (
             <section className="mt-8 space-y-6">
               <MemberList orgSlug={orgSlug} result={result} />
-              <TeamList result={{ data: userTeamsRaw?.data ?? [] }} />
+              <TeamList
+                result={{
+                  data: userTeamsRaw?.data ?? [],
+                  organizationId: orgId,
+                }}
+              />
 
               <Card className="mt-8">
                 <CardHeader>
