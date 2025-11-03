@@ -10,6 +10,7 @@ import {
   useMutation,
 } from "convex/react";
 import { useCallback, useMemo } from "react";
+import { CalendarCard } from "@/components/calendar-card";
 import { FileUpload } from "@/components/file-upload";
 import Loader from "@/components/loader";
 import { MemberList } from "@/components/member-list";
@@ -157,6 +158,10 @@ function OrgRouteComponent() {
 
               {userId ? (
                 <FileUpload organizationId={orgSlug} userId={userId} />
+              ) : null}
+
+              {userId ? (
+                <CalendarCard organizationId={orgSlug} userId={userId} />
               ) : null}
 
               <Card className="mt-8">

@@ -25,4 +25,15 @@ export default defineSchema({
   })
     .index("byOrganization", ["organizationId"])
     .index("byTeam", ["teamId"]),
+  exams: defineTable({
+    title: v.string(),
+    date: v.number(),
+    description: v.optional(v.string()),
+    createdBy: v.string(),
+    organizationId: v.string(),
+    teamId: v.optional(v.string()),
+  })
+    .index("byOrganization", ["organizationId"])
+    .index("byTeam", ["teamId"])
+    .index("byDate", ["organizationId", "date"]),
 });
