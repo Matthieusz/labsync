@@ -38,8 +38,8 @@ function OrgRouteComponent() {
   );
   const orgId = result?.data?.id || "";
 
-  const { data: userTeamsRaw } = useSuspenseQuery(
-    convexQuery(api.teams.listTeamsByOrganization, { organizationId: orgId })
+  const { data: teamsSplit } = useSuspenseQuery(
+    convexQuery(api.teams.listTeamsSplitByMembership, { organizationId: orgId })
   );
 
   const { data: messagesResult } = useSuspenseQuery(
@@ -138,11 +138,20 @@ function OrgRouteComponent() {
             <section className="mt-8 space-y-6">
               <MemberList orgSlug={orgSlug} result={result} />
               <TeamList
+                available={
+                  (teamsSplit?.data?.available ?? []) as Array<{
+                    id: string;
+                    name: string;
+                  }>
+                }
+                joined={
+                  (teamsSplit?.data?.joined ?? []) as Array<{
+                    id: string;
+                    name: string;
+                  }>
+                }
+                organizationId={orgId}
                 orgSlug={orgSlug}
-                result={{
-                  data: userTeamsRaw?.data ?? [],
-                  organizationId: orgId,
-                }}
               />
 
               <Card className="mt-8">

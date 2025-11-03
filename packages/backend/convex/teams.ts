@@ -42,18 +42,89 @@ export const createTeamInOrganization = mutation({
   handler: async (ctx, args) => {
     try {
       const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-      // Hash the password before creating the team
+
+      const session = await auth.api.getSession({ headers });
+      if (!session?.user?.id) {
+        return { error: "User not authenticated", data: null };
+      }
+
       const hashedPassword = await hashPassword(args.password);
-      // Create team in organization
+
       const teamRes = await auth.api.createTeam({
-        headers,
         body: {
           organizationId: args.organizationId,
           name: args.name,
           password: hashedPassword,
         },
       });
+
+      try {
+        await auth.api.addTeamMember({
+          headers,
+          body: {
+            teamId: teamRes.id,
+            userId: session.user.id,
+          },
+        });
+      } catch (memberErr) {
+        console.error("Failed to add team member:", memberErr);
+        return {
+          error:
+            memberErr instanceof Error ? memberErr.message : String(memberErr),
+          data: null,
+        };
+      }
+
       return { error: undefined, data: teamRes };
+    } catch (err) {
+      return {
+        error: err instanceof Error ? err.message : String(err),
+        data: null,
+      };
+    }
+  },
+});
+
+export const listTeamsSplitByMembership = query({
+  args: { organizationId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+
+      // Fetch all teams in the organization
+      const teamsRes = await auth.api.listOrganizationTeams({
+        headers,
+        query: { organizationId: args.organizationId },
+      });
+
+      const allTeams: Array<{
+        id: string;
+        name: string;
+        createdAt?: number;
+      }> = Array.isArray(teamsRes)
+        ? teamsRes.map(
+            (team: { id: string; name: string; createdAt?: Date }) => ({
+              id: team.id,
+              name: team.name,
+              createdAt:
+                team.createdAt instanceof Date
+                  ? team.createdAt.getTime()
+                  : undefined,
+            })
+          )
+        : [];
+
+      // Fetch teams for the current user and intersect by team id to classify
+      const userTeamsRes = await auth.api.listUserTeams({ headers });
+      const userTeams: Array<{ id: string }> = Array.isArray(userTeamsRes)
+        ? (userTeamsRes as Array<{ id: string }>)
+        : [];
+      const userTeamIds = new Set(userTeams.map((t) => t.id));
+
+      const joined = allTeams.filter((t) => userTeamIds.has(t.id));
+      const available = allTeams.filter((t) => !userTeamIds.has(t.id));
+
+      return { error: undefined, data: { joined, available } };
     } catch (err) {
       return {
         error: err instanceof Error ? err.message : String(err),
@@ -73,13 +144,11 @@ export const joinTeamWithPassword = mutation({
     try {
       const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
 
-      // Get current user
       const session = await auth.api.getSession({ headers });
       if (!session?.user?.id) {
         return { error: "User not authenticated", data: null };
       }
 
-      // List all teams to find the target team and verify password
       const teamsRes = await auth.api.listOrganizationTeams({
         headers,
         query: { organizationId: args.organizationId },
@@ -92,6 +161,7 @@ export const joinTeamWithPassword = mutation({
       const team = teamsRes.find((t: { id: string }) => t.id === args.teamId) as
         | { id: string; password?: string }
         | undefined;
+
       if (!team) {
         return { error: "Team not found", data: null };
       }
@@ -103,7 +173,6 @@ export const joinTeamWithPassword = mutation({
         };
       }
 
-      // Verify password (the team should have a hashed password stored)
       const isValid = await verifyPassword({
         password: args.password,
         hash: team.password,
@@ -113,8 +182,8 @@ export const joinTeamWithPassword = mutation({
         return { error: "Invalid password", data: null };
       }
 
-      // Add user to team
       const result = await auth.api.addTeamMember({
+        headers,
         body: {
           teamId: args.teamId,
           userId: session.user.id,

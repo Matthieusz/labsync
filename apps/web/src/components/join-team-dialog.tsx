@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -62,23 +61,9 @@ export function JoinTeamDialog({
           return;
         }
 
-        // Set active organization before navigating
-        const setActiveResult = await authClient.organization.setActive({
-          organizationId,
-          organizationSlug: orgSlug,
-        });
-
-        if (setActiveResult.error) {
-          toast.error(
-            setActiveResult.error.message || "Failed to set active organization"
-          );
-          return;
-        }
-
         toast.success("Successfully joined team");
         setOpen(false);
 
-        // Redirect to the team page
         await navigate({
           to: "/dashboard/$orgSlug/$teamId",
           params: { orgSlug, teamId },

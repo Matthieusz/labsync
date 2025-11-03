@@ -17,7 +17,7 @@ export const ac = createAccessControl(statement);
 
 // Override the default member role to allow creating teams
 export const member = ac.newRole({
-  team: ["create"],
+  team: ["create", "update"],
 });
 
 export type AccessController = typeof ac;
