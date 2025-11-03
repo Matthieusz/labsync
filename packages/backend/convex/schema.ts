@@ -14,4 +14,15 @@ export default defineSchema({
   })
     .index("byOrganization", ["organizationId"])
     .index("byTeam", ["teamId"]),
+  files: defineTable({
+    storageId: v.id("_storage"),
+    fileName: v.string(),
+    fileType: v.string(),
+    fileSize: v.number(),
+    uploadedBy: v.string(),
+    organizationId: v.string(),
+    teamId: v.optional(v.string()),
+  })
+    .index("byOrganization", ["organizationId"])
+    .index("byTeam", ["teamId"]),
 });
