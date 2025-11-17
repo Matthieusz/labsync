@@ -13,10 +13,5 @@ export default defineConfig({
     nitro(),
     viteReact(),
   ],
-  nitro: {
-    preset: "node-server",
-  },
-  optimizeDeps: {
-    exclude: ["oxc-transform"],
-  },
+  nitro: {},
 });
