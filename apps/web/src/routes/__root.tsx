@@ -4,7 +4,6 @@ import {
   getCookieName,
 } from "@convex-dev/better-auth/react-start";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
-import { createAuth } from "@labsync/backend/convex/auth";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
@@ -24,6 +23,9 @@ import { authClient } from "@/lib/auth-client";
 import appCss from "../index.css?url";
 
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
+  const { createAuth } = await import(
+    "../../../../packages/backend/convex/auth"
+  );
   const { session } = await fetchSession(getRequest());
   const sessionCookieName = getCookieName(createAuth);
   const token = getCookie(sessionCookieName);

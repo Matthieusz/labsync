@@ -17,6 +17,7 @@ export const authComponent = createClient<DataModel, typeof authSchema>(
     local: {
       schema: authSchema,
     },
+    verbose: true,
   }
 );
 export const createAuth = (
