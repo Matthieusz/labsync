@@ -16,4 +16,7 @@ export default defineConfig({
   nitro: {
     preset: "node-server",
   },
+  optimizeDeps: {
+    exclude: ["oxc-transform"],
+  },
 });
