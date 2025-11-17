@@ -5,7 +5,8 @@
   "scripts": {
     "build": "vite build",
     "serve": "vite preview",
-    "dev": "vite dev --port=3001"
+    "dev": "vite dev --port=3001",
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.9.6",
