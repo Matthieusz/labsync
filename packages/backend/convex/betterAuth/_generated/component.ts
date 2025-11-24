@@ -95,7 +95,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                   createdAt: number;
                   name: string;
                   organizationId: string;
-                  password: string;
+                  password?: string;
                   updatedAt?: null | number;
                 };
                 model: "team";

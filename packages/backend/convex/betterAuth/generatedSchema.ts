@@ -70,7 +70,7 @@ export const tables = {
     organizationId: v.string(),
     createdAt: v.number(),
     updatedAt: v.optional(v.union(v.null(), v.number())),
-    password: v.string(),
+    password: v.optional(v.string()),
   })
     .index("organizationId", ["organizationId"]),
   teamMember: defineTable({

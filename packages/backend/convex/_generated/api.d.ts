@@ -138,7 +138,7 @@ export declare const components: {
                   createdAt: number;
                   name: string;
                   organizationId: string;
-                  password: string;
+                  password?: string;
                   updatedAt?: null | number;
                 };
                 model: "team";

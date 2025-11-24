@@ -1,3 +1,4 @@
+import { Users } from "lucide-react";
 import InviteUserDialog from "./invite-user-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
@@ -20,39 +21,56 @@ type MembersCardProps = {
 };
 
 export const MemberList = ({ result, orgSlug }: MembersCardProps) => (
-  <Card>
-    <CardHeader>
+  <Card className="flex flex-col">
+    <CardHeader className="pb-4">
       <div className="flex items-center justify-between">
-        <CardTitle className="text-base">Members</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Users className="h-4 w-4" />
+          Members
+        </CardTitle>
         <InviteUserDialog
           organizationId={result.data.id}
           organizationName={result.data.name || orgSlug}
         />
       </div>
     </CardHeader>
-    <CardContent>
+    <CardContent className="flex-1">
       {result.data.members.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No members found.</p>
+        <div className="flex h-32 flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-center">
+          <Users className="h-8 w-8 text-muted-foreground/50" />
+          <p className="text-muted-foreground text-sm">No members found.</p>
+        </div>
       ) : (
-        <ul className="divide-y rounded-md border">
-          {result.data.members.map((m) => (
-            <li
-              className="flex flex-col gap-1 px-4 py-3 text-sm"
-              key={m.userId || m.email}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-medium">
-                  {m.name || m.email || "Unknown"}
-                </span>
-                <span className="bg-muted px-2 py-0.5 text-xs capitalize">
+        <ul className="space-y-3">
+          {result.data.members.map((m) => {
+            const displayName = m.name || m.email || "Unknown";
+            const initials = displayName.substring(0, 2).toUpperCase();
+            return (
+              <li
+                className="flex items-center justify-between gap-3"
+                key={m.userId || m.email}
+              >
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-medium text-primary text-xs">
+                    {initials}
+                  </div>
+                  <div className="flex flex-col overflow-hidden">
+                    <span className="truncate font-medium text-sm">
+                      {displayName}
+                    </span>
+                    {m.email && (
+                      <span className="truncate text-muted-foreground text-xs">
+                        {m.email}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 font-medium text-muted-foreground text-xs capitalize">
                   {m.role}
                 </span>
-              </div>
-              {m.email && (
-                <span className="text-muted-foreground text-xs">{m.email}</span>
-              )}
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </CardContent>

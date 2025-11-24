@@ -9,6 +9,7 @@ import {
   Unauthenticated,
   useMutation,
 } from "convex/react";
+import { ArrowRight, MessageSquare, Slash } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { CalendarCard } from "@/components/calendar-card";
 import { FileUpload } from "@/components/file-upload";
@@ -114,8 +115,20 @@ function OrgRouteComponent() {
         <div className="mx-auto w-full max-w-7xl px-4 py-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
+              <div className="mb-1 flex items-center gap-2 text-muted-foreground text-sm">
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  to="/dashboard"
+                >
+                  Dashboard
+                </Link>
+                <Slash className="-rotate-12 h-3 w-3 opacity-50" />
+                <span className="font-medium text-foreground">
+                  {result.data?.name || orgSlug}
+                </span>
+              </div>
               <h1 className="font-semibold text-2xl tracking-tight">
-                Organization: {result.data?.name || orgSlug}
+                {result.data?.name || orgSlug}
               </h1>
               {result.error && (
                 <p className="text-destructive text-sm" role="alert">
@@ -128,129 +141,135 @@ function OrgRouteComponent() {
             </div>
           </div>
 
-          <div className="mt-6">
-            <Link preload="intent" to="/dashboard">
-              <Button size="sm" type="button" variant="outline">
-                Back to dashboard
-              </Button>
-            </Link>
-          </div>
-
           {result.data ? (
-            <section className="mt-8 space-y-6">
-              <MemberList orgSlug={orgSlug} result={result} />
-              <TeamList
-                available={
-                  (teamsSplit?.data?.available ?? []) as Array<{
-                    id: string;
-                    name: string;
-                  }>
-                }
-                joined={
-                  (teamsSplit?.data?.joined ?? []) as Array<{
-                    id: string;
-                    name: string;
-                  }>
-                }
-                organizationId={orgId}
-                orgSlug={orgSlug}
-              />
+            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+              <div className="space-y-8 lg:col-span-2">
+                <TeamList
+                  available={
+                    (teamsSplit?.data?.available ?? []) as Array<{
+                      id: string;
+                      name: string;
+                    }>
+                  }
+                  joined={
+                    (teamsSplit?.data?.joined ?? []) as Array<{
+                      id: string;
+                      name: string;
+                    }>
+                  }
+                  organizationId={orgId}
+                  orgSlug={orgSlug}
+                />
 
-              {userId ? (
-                <FileUpload organizationId={orgSlug} userId={userId} />
-              ) : null}
+                {userId ? (
+                  <CalendarCard organizationId={orgSlug} userId={userId} />
+                ) : null}
 
-              {userId ? (
-                <CalendarCard organizationId={orgSlug} userId={userId} />
-              ) : null}
-
-              <Card className="mt-8">
-                <CardHeader>
-                  <CardTitle className="text-base">Chat</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div
-                    aria-live="polite"
-                    aria-relevant="additions"
-                    className="scrollbar-hidden relative flex h-80 max-h-96 flex-col overflow-y-auto rounded-md border bg-muted/30 p-2"
-                    role="log"
-                    style={{ scrollBehavior: "smooth" }}
-                  >
-                    {messages.length ? (
-                      <ul className="flex flex-col gap-3">
-                        {messages.map((msg) => {
-                          const isOwn = msg.userId === userId;
-                          const name = membersById[msg.userId] || msg.userId;
-                          return (
-                            <li
-                              className={
-                                isOwn
-                                  ? "flex w-full justify-end"
-                                  : "flex w-full justify-start"
-                              }
-                              key={msg._id}
-                            >
-                              <div
+                <Card className="flex h-[500px] flex-col">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <MessageSquare className="h-4 w-4" />
+                      Team Chat
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col overflow-hidden pt-0">
+                    <div
+                      aria-live="polite"
+                      aria-relevant="additions"
+                      className="scrollbar-hidden relative flex flex-1 flex-col overflow-y-auto rounded-md border bg-muted/30 p-4"
+                      role="log"
+                      style={{ scrollBehavior: "smooth" }}
+                    >
+                      {messages.length ? (
+                        <ul className="flex flex-col gap-4">
+                          {messages.map((msg) => {
+                            const isOwn = msg.userId === userId;
+                            const name = membersById[msg.userId] || msg.userId;
+                            return (
+                              <li
                                 className={
                                   isOwn
-                                    ? "flex max-w-[75%] flex-col items-end"
-                                    : "flex max-w-[75%] flex-col items-start"
+                                    ? "flex w-full justify-end"
+                                    : "flex w-full justify-start"
                                 }
+                                key={msg._id}
                               >
                                 <div
                                   className={
                                     isOwn
-                                      ? "rounded-2xl bg-primary px-3 py-2 text-primary-foreground text-sm shadow-sm"
-                                      : "rounded-2xl bg-white px-3 py-2 text-primary-foreground text-sm shadow-sm ring-1 ring-black/5"
+                                      ? "flex max-w-[85%] flex-col items-end"
+                                      : "flex max-w-[85%] flex-col items-start"
                                   }
                                 >
-                                  {msg.content}
+                                  <div
+                                    className={
+                                      isOwn
+                                        ? "rounded-2xl rounded-tr-sm bg-primary px-4 py-2 text-primary-foreground text-sm shadow-sm"
+                                        : "rounded-2xl rounded-tl-sm bg-background px-4 py-2 text-foreground text-sm shadow-sm ring-1 ring-border"
+                                    }
+                                  >
+                                    {msg.content}
+                                  </div>
+                                  <div className="mt-1.5 flex items-center gap-1 text-[10px] text-muted-foreground">
+                                    <span className="font-medium">{name}</span>
+                                    <span>•</span>
+                                    <span>{formatTime(msg._creationTime)}</span>
+                                  </div>
                                 </div>
-                                <div className="mt-1 text-[10px] text-muted-foreground">
-                                  {name} • {formatTime(msg._creationTime)}
-                                </div>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
-                        No messages yet. Start the conversation!
-                      </div>
-                    )}
-                  </div>
-
-                  <form
-                    aria-label="Send a message"
-                    className="mt-4 flex gap-2"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      form.handleSubmit();
-                    }}
-                  >
-                    <form.Field name="content">
-                      {(field) => (
-                        <Input
-                          aria-label="Message content"
-                          autoComplete="off"
-                          className="flex-1"
-                          disabled={form.state.isSubmitting}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder="Type your message..."
-                          value={field.state.value}
-                        />
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : (
+                        <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground text-sm">
+                          <MessageSquare className="h-8 w-8 opacity-20" />
+                          <p>No messages yet</p>
+                        </div>
                       )}
-                    </form.Field>
-                    <Button aria-label="Send message" type="submit">
-                      Send
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </section>
+                    </div>
+
+                    <form
+                      aria-label="Send a message"
+                      className="mt-4 flex gap-2"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        form.handleSubmit();
+                      }}
+                    >
+                      <form.Field name="content">
+                        {(field) => (
+                          <Input
+                            aria-label="Message content"
+                            autoComplete="off"
+                            className="flex-1"
+                            disabled={form.state.isSubmitting}
+                            onBlur={field.handleBlur}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            placeholder="Type your message..."
+                            value={field.state.value}
+                          />
+                        )}
+                      </form.Field>
+                      <Button
+                        aria-label="Send message"
+                        size="icon"
+                        type="submit"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="space-y-8">
+                {userId ? (
+                  <FileUpload organizationId={orgSlug} userId={userId} />
+                ) : null}
+                <MemberList orgSlug={orgSlug} result={result} />
+              </div>
+            </div>
           ) : (
             <div className="mt-8 text-muted-foreground text-sm">
               No data available.

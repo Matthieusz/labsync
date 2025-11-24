@@ -8,10 +8,10 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { LogIn } from "lucide-react";
+import { ArrowRight, Building2, LogIn, Plus, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import CreateTeamDialog from "@/components/create-organization-dialog";
+import CreateOrganizationDialog from "@/components/create-organization-dialog";
 import Loader from "@/components/loader";
 import PendingInvitations from "@/components/pending-invitations";
 import { Button } from "@/components/ui/button";
@@ -84,7 +84,7 @@ function RouteComponent() {
             </div>
             <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
               <div className="flex items-center gap-2">
-                <CreateTeamDialog />
+                <CreateOrganizationDialog />
                 <UserMenu />
               </div>
             </div>
@@ -95,7 +95,11 @@ function RouteComponent() {
 
           {/* Organizations List */}
           <section className="mt-8">
-            <h2 className="mb-4 font-semibold text-xl">Your Organizations</h2>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="font-semibold text-xl tracking-tight">
+                Your Organizations
+              </h2>
+            </div>
             {/* Error handling */}
             {orgs.error && (
               <div
@@ -107,14 +111,18 @@ function RouteComponent() {
               </div>
             )}
             {orgList.length === 0 ? (
-              <div className="flex flex-col items-start gap-4 rounded-lg border border-dashed p-8 text-sm">
-                <div>
-                  <p className="font-medium">No organizations yet</p>
-                  <p className="text-muted-foreground">
-                    Create your first organization to get started.
+              <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed bg-muted/30 p-12 text-center">
+                <div className="rounded-full bg-muted p-4">
+                  <Building2 className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="max-w-sm space-y-1">
+                  <p className="font-medium text-lg">No organizations yet</p>
+                  <p className="text-muted-foreground text-sm">
+                    Create your first organization to get started with your
+                    team.
                   </p>
                 </div>
-                <CreateTeamDialog />
+                <CreateOrganizationDialog />
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -123,82 +131,76 @@ function RouteComponent() {
                     org.owner?.name || org.owner?.email || "Unknown";
                   return (
                     <Card
-                      className="transition-colors hover:border-foreground/30"
+                      className="group relative flex flex-col overflow-hidden p-0 transition-all hover:border-primary/20 hover:shadow-lg"
                       key={org.id}
                     >
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between text-base">
-                          <span className="truncate" title={org.name}>
-                            {org.name}
-                          </span>
-                          {org.slug && (
-                            <span className="font-normal text-muted-foreground text-xs">
-                              /{org.slug}
-                            </span>
-                          )}
-                        </CardTitle>
-                        <CardDescription>
-                          {ownerLabel === "Unknown"
-                            ? "Owner unavailable"
-                            : `Owned by ${ownerLabel}`}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <dl className="grid grid-cols-1 gap-3 text-xs">
-                          <div className="flex flex-col gap-0.5">
-                            <dt className="text-muted-foreground">Name</dt>
-                            <dd className="wrap-break-word font-medium">
-                              {org.name}
-                            </dd>
+                      <div className="absolute inset-x-0 top-0 h-1 from-primary/40 via-primary/60 to-primary opacity-75" />
+                      <CardHeader className="px-6 pt-6 pb-2">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="rounded-lg bg-primary/10 p-2.5 ring-1 ring-primary/20">
+                            <Building2 className="h-5 w-5 text-primary" />
                           </div>
                           {org.slug && (
-                            <div className="flex flex-col gap-0.5">
-                              <dt className="text-muted-foreground">Slug</dt>
-                              <dd className="font-mono text-[11px]">
-                                {org.slug}
-                              </dd>
-                            </div>
-                          )}
-                          <div className="flex flex-col gap-0.5">
-                            <dt className="text-muted-foreground">Owner</dt>
-                            <dd className="wrap-break-word font-medium">
-                              {ownerLabel}
-                            </dd>
-                          </div>
-                          {typeof org.memberCount === "number" && (
-                            <div className="flex flex-col gap-0.5">
-                              <dt className="text-muted-foreground">Members</dt>
-                              <dd className="font-medium">{org.memberCount}</dd>
-                            </div>
-                          )}
-                        </dl>
-                      </CardContent>
-                      <CardFooter className="justify-end">
-                        <div className="flex gap-2">
-                          {org.slug ? (
                             <Button
+                              className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
                               disabled={loadingOrgId === org.id}
                               onClick={() =>
                                 handleOpenOrganization(org.id, org.slug || "")
                               }
-                              size="sm"
-                              type="button"
-                              variant="outline"
+                              size="icon"
+                              variant="ghost"
                             >
-                              {loadingOrgId === org.id ? "Opening..." : "Open"}
-                            </Button>
-                          ) : (
-                            <Button
-                              disabled
-                              size="sm"
-                              type="button"
-                              variant="outline"
-                            >
-                              Open
+                              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                              <span className="sr-only">Open</span>
                             </Button>
                           )}
                         </div>
+                        <div className="space-y-1 pt-3">
+                          <CardTitle className="line-clamp-1 font-semibold text-lg tracking-tight">
+                            {org.name}
+                          </CardTitle>
+                          <CardDescription className="line-clamp-1 font-mono text-muted-foreground/80 text-xs">
+                            /{org.slug}
+                          </CardDescription>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-1 px-6 pb-4">
+                        <div className="flex items-center gap-4 text-muted-foreground text-sm">
+                          <div className="flex items-center gap-2 rounded-full bg-muted/50 px-2.5 py-1 font-medium text-xs">
+                            <Users className="h-3.5 w-3.5" />
+                            <span>
+                              {typeof org.memberCount === "number"
+                                ? `${org.memberCount} member${org.memberCount !== 1 ? "s" : ""}`
+                                : "Unknown members"}
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="border-t-1 bg-muted/10 py-3">
+                        <div className="flex w-full items-center justify-between text-xs">
+                          <span className="font-medium text-muted-foreground">
+                            Owner
+                          </span>
+                          <span
+                            className="max-w-[120px] truncate font-medium text-foreground/80"
+                            title={ownerLabel}
+                          >
+                            {ownerLabel}
+                          </span>
+                        </div>
                       </CardFooter>
+                      {org.slug && (
+                        <button
+                          className="absolute inset-0 z-10 cursor-pointer"
+                          disabled={loadingOrgId === org.id}
+                          onClick={() =>
+                            handleOpenOrganization(org.id, org.slug || "")
+                          }
+                          type="button"
+                        >
+                          <span className="sr-only">Open {org.name}</span>
+                        </button>
+                      )}
                     </Card>
                   );
                 })}
