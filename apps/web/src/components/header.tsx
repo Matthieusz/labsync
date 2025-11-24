@@ -1,10 +1,13 @@
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./language-switcher";
 
 export default function Header() {
+  const { t } = useTranslation();
   const links = [
-    { to: "/", label: "Home" },
-    { to: "/dashboard", label: "Dashboard" },
-    { to: "/todos", label: "Todos" },
+    { to: "/", label: t("common.home") },
+    { to: "/dashboard", label: t("common.dashboard") },
+    { to: "/todos", label: t("common.todos") },
   ] as const;
 
   return (
@@ -17,7 +20,9 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2" />
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+        </div>
       </div>
       <hr />
     </div>

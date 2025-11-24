@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -21,15 +22,6 @@ import { Label } from "@/components/ui/label";
 
 const MIN_PASSWORD_LENGTH = 6;
 
-const passwordOnlySchema = z.object({
-  password: z
-    .string()
-    .min(
-      MIN_PASSWORD_LENGTH,
-      `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
-    ),
-});
-
 export function JoinTeamDialog({
   organizationId,
   orgSlug,
@@ -41,13 +33,23 @@ export function JoinTeamDialog({
   teamId: string;
   teamName: string;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const joinTeam = useMutation(api.teams.joinTeamWithPassword);
 
   const form = useForm({
     defaultValues: { password: "" },
-    validators: { onSubmit: passwordOnlySchema },
+    validators: {
+      onSubmit: z.object({
+        password: z
+          .string()
+          .min(
+            MIN_PASSWORD_LENGTH,
+            t("teams.minPasswordLength", { count: MIN_PASSWORD_LENGTH })
+          ),
+      }),
+    },
     onSubmit: async ({ value }) => {
       try {
         const result = await joinTeam({
@@ -61,7 +63,7 @@ export function JoinTeamDialog({
           return;
         }
 
-        toast.success("Successfully joined team");
+        toast.success(t("teams.joined"));
         setOpen(false);
 
         await navigate({
@@ -69,7 +71,8 @@ export function JoinTeamDialog({
           params: { orgSlug, teamId },
         });
       } catch (e: unknown) {
-        const message = e instanceof Error ? e.message : "Failed to join team";
+        const message =
+          e instanceof Error ? e.message : t("teams.failedToJoin");
         toast.error(message);
       }
     },
@@ -80,15 +83,13 @@ export function JoinTeamDialog({
       <DialogTrigger asChild>
         <Button size="sm" type="button" variant="outline">
           <UserPlus />
-          Join
+          {t("teams.join")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Join {teamName}</DialogTitle>
-          <DialogDescription>
-            Enter the team password to join this team.
-          </DialogDescription>
+          <DialogTitle>{t("teams.joinWithPassword", { teamName })}</DialogTitle>
+          <DialogDescription>{t("teams.joinDescription")}</DialogDescription>
         </DialogHeader>
         <form
           className="space-y-4"
@@ -101,13 +102,13 @@ export function JoinTeamDialog({
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
+                <Label htmlFor={field.name}>{t("teams.password")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="Enter team password"
+                  placeholder={t("teams.passwordPlaceholder")}
                   type="password"
                   value={field.state.value}
                 />
@@ -125,7 +126,7 @@ export function JoinTeamDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <form.Subscribe>
               {(state) => (
@@ -133,7 +134,7 @@ export function JoinTeamDialog({
                   disabled={!state.canSubmit || state.isSubmitting}
                   type="submit"
                 >
-                  {state.isSubmitting ? "Joining..." : "Join Team"}
+                  {state.isSubmitting ? t("common.loading") : t("teams.join")}
                 </Button>
               )}
             </form.Subscribe>

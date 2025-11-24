@@ -21,6 +21,7 @@ import Loader from "@/components/loader";
 import { Toaster } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 import appCss from "../index.css?url";
+import "@/lib/i18n";
 
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
   const { createAuth } = await import(

@@ -10,6 +10,7 @@ import {
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { ArrowRight, Building2, LogIn, Plus, Users } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import CreateOrganizationDialog from "@/components/create-organization-dialog";
 import Loader from "@/components/loader";
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function RouteComponent() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loadingOrgId, setLoadingOrgId] = useState<string | null>(null);
   const { data: orgs } = useSuspenseQuery(
@@ -79,7 +81,7 @@ function RouteComponent() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <h1 className="font-semibold text-2xl tracking-tight">
-                Dashboard
+                {t("common.dashboard")}
               </h1>
             </div>
             <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
@@ -97,7 +99,7 @@ function RouteComponent() {
           <section className="mt-8">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="font-semibold text-xl tracking-tight">
-                Your Organizations
+                {t("organizations.yourOrganizations")}
               </h2>
             </div>
             {/* Error handling */}
@@ -116,10 +118,11 @@ function RouteComponent() {
                   <Building2 className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="max-w-sm space-y-1">
-                  <p className="font-medium text-lg">No organizations yet</p>
+                  <p className="font-medium text-lg">
+                    {t("organizations.noOrganizations")}
+                  </p>
                   <p className="text-muted-foreground text-sm">
-                    Create your first organization to get started with your
-                    team.
+                    {t("organizations.createFirst")}
                   </p>
                 </div>
                 <CreateOrganizationDialog />
@@ -151,7 +154,9 @@ function RouteComponent() {
                               variant="ghost"
                             >
                               <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                              <span className="sr-only">Open</span>
+                              <span className="sr-only">
+                                {t("common.open")}
+                              </span>
                             </Button>
                           )}
                         </div>
@@ -170,16 +175,18 @@ function RouteComponent() {
                             <Users className="h-3.5 w-3.5" />
                             <span>
                               {typeof org.memberCount === "number"
-                                ? `${org.memberCount} member${org.memberCount !== 1 ? "s" : ""}`
-                                : "Unknown members"}
+                                ? t("organizations.members", {
+                                    count: org.memberCount,
+                                  })
+                                : t("organizations.unknownMembers")}
                             </span>
                           </div>
                         </div>
                       </CardContent>
-                      <CardFooter className="border-t-1 bg-muted/10 py-3">
+                      <CardFooter className="border-t bg-muted/10 py-3">
                         <div className="flex w-full items-center justify-between text-xs">
                           <span className="font-medium text-muted-foreground">
-                            Owner
+                            {t("organizations.owner")}
                           </span>
                           <span
                             className="max-w-[120px] truncate font-medium text-foreground/80"
@@ -212,11 +219,11 @@ function RouteComponent() {
       <Unauthenticated>
         <div className="mx-auto w-full max-w-7xl px-4 py-8">
           <h2 className="mt-8 font-bold text-2xl">
-            To access the dashboard, please log in.
+            {t("common.loginRequired")}
           </h2>
           <Link to="/">
             <Button type="button">
-              <LogIn /> Log in
+              <LogIn /> {t("common.login")}
             </Button>
           </Link>
         </div>

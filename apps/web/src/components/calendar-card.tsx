@@ -3,6 +3,7 @@ import type { Id } from "@labsync/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -42,6 +43,7 @@ type Exam = {
 };
 
 export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
+  const { t } = useTranslation();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [examTitle, setExamTitle] = useState("");
@@ -117,41 +119,41 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base">Calendar & Exams</CardTitle>
+            <CardTitle className="text-base">{t("calendar.title")}</CardTitle>
             <CardDescription className="text-xs">
-              View and manage exam dates
+              {t("calendar.description")}
               {sortedExams.length > 0
-                ? ` • ${sortedExams.length} exam${sortedExams.length === 1 ? "" : "s"} scheduled`
+                ? ` • ${t("calendar.examsScheduled", { count: sortedExams.length })}`
                 : ""}
             </CardDescription>
           </div>
           <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" type="button">
-                Add Exam
+                {t("calendar.addExam")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create New Exam</DialogTitle>
+                <DialogTitle>{t("calendar.createExam")}</DialogTitle>
                 <DialogDescription>
-                  Add an exam to your organization calendar
+                  {t("calendar.createExamDescription")}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateExam}>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="title">Exam Title</Label>
+                    <Label htmlFor="title">{t("calendar.examTitle")}</Label>
                     <Input
                       id="title"
                       onChange={(e) => setExamTitle(e.target.value)}
-                      placeholder="e.g., Final Exam - Mathematics"
+                      placeholder={t("calendar.examTitlePlaceholder")}
                       required
                       value={examTitle}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="date">Date</Label>
+                    <Label htmlFor="date">{t("calendar.date")}</Label>
                     <Input
                       id="date"
                       onChange={(e) => setExamDate(e.target.value)}
@@ -161,17 +163,19 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="description">
+                      {t("calendar.descriptionLabel")}
+                    </Label>
                     <Input
                       id="description"
                       onChange={(e) => setExamDescription(e.target.value)}
-                      placeholder="Additional details about the exam"
+                      placeholder={t("calendar.descriptionPlaceholder")}
                       value={examDescription}
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Create Exam</Button>
+                  <Button type="submit">{t("calendar.createExam")}</Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -196,7 +200,9 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-medium text-sm">Upcoming Exams</h3>
+            <h3 className="font-medium text-sm">
+              {t("calendar.upcomingExams")}
+            </h3>
             {sortedExams.length > 0 ? (
               <ul className="space-y-3">
                 {sortedExams.map((exam) => (
@@ -220,7 +226,7 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
                         ) : null}
                       </div>
                       <Button
-                        aria-label="Delete exam"
+                        aria-label={t("calendar.deleteExam")}
                         onClick={() => handleDeleteExam(exam._id)}
                         size="sm"
                         type="button"
@@ -234,7 +240,7 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
               </ul>
             ) : (
               <div className="text-center text-muted-foreground text-sm">
-                No exams scheduled yet. Click "Add Exam" to create one.
+                {t("calendar.noExams")}
               </div>
             )}
           </div>

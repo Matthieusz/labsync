@@ -3,6 +3,7 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMutation } from "convex/react";
 import { Check, Mail, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ type Invitation = {
 };
 
 export function PendingInvitations() {
+  const { t } = useTranslation();
   const { data: invitationsResult } = useSuspenseQuery(
     convexQuery(api.organizations.listPendingInvitations, {})
   );
@@ -44,11 +46,13 @@ export function PendingInvitations() {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("Invitation accepted successfully!");
+        toast.success(t("invitations.accepted"));
       }
     } catch (error: unknown) {
       const message =
-        error instanceof Error ? error.message : "Failed to accept invitation";
+        error instanceof Error
+          ? error.message
+          : t("invitations.failedToAccept");
       toast.error(message);
     }
   };
@@ -60,11 +64,13 @@ export function PendingInvitations() {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("Invitation declined successfully!");
+        toast.success(t("invitations.declined"));
       }
     } catch (error: unknown) {
       const message =
-        error instanceof Error ? error.message : "Failed to decline invitation";
+        error instanceof Error
+          ? error.message
+          : t("invitations.failedToDecline");
       toast.error(message);
     }
   };
@@ -72,7 +78,7 @@ export function PendingInvitations() {
   if (invitationsResult.error) {
     return (
       <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm">
-        <p className="font-medium">Failed to load invitations</p>
+        <p className="font-medium">{t("invitations.failedToLoad")}</p>
         <p className="text-muted-foreground">{invitationsResult.error}</p>
       </div>
     );
@@ -92,34 +98,40 @@ export function PendingInvitations() {
 
   return (
     <section className="mt-8">
-      <h2 className="mb-4 font-semibold text-xl">Pending Invitations</h2>
+      <h2 className="mb-4 font-semibold text-xl">{t("invitations.pending")}</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pendingInvitations.map((invitation) => (
           <Card className="border-amber-200 bg-amber-50/50" key={invitation.id}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Mail className="h-4 w-4 text-amber-600" />
-                Organization Invitation
+                {t("invitations.orgInvitation")}
               </CardTitle>
               <CardDescription>
-                {invitation.organizationName || "Unknown Organization"}
+                {invitation.organizationName || t("organizations.unknown")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Role: </span>
+                  <span className="text-muted-foreground">
+                    {t("common.role")}:{" "}
+                  </span>
                   <span className="font-medium capitalize">
                     {invitation.role}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Email: </span>
+                  <span className="text-muted-foreground">
+                    {t("common.email")}:{" "}
+                  </span>
                   <span className="font-medium">{invitation.email}</span>
                 </div>
                 {invitation.invitedBy && (
                   <div>
-                    <span className="text-muted-foreground">Invited by: </span>
+                    <span className="text-muted-foreground">
+                      {t("invitations.invitedBy")}:{" "}
+                    </span>
                     <span className="font-medium">
                       {invitation.invitedBy.name || invitation.invitedBy.email}
                     </span>
@@ -127,7 +139,9 @@ export function PendingInvitations() {
                 )}
                 {invitation.expiresAt && (
                   <div>
-                    <span className="text-muted-foreground">Expires: </span>
+                    <span className="text-muted-foreground">
+                      {t("common.expires")}:{" "}
+                    </span>
                     <span className="font-medium">
                       {invitation.expiresAt instanceof Date
                         ? invitation.expiresAt.toLocaleDateString()
@@ -145,7 +159,7 @@ export function PendingInvitations() {
                   type="button"
                 >
                   <Check className="h-4 w-4" />
-                  Accept
+                  {t("common.accept")}
                 </Button>
                 <Button
                   onClick={() => handleDeclineInvitation(invitation.id)}
@@ -154,7 +168,7 @@ export function PendingInvitations() {
                   variant="outline"
                 >
                   <X className="h-4 w-4" />
-                  Reject
+                  {t("common.decline")}
                 </Button>
               </div>
             </CardContent>

@@ -11,6 +11,7 @@ import {
 } from "convex/react";
 import { ArrowRight, MessageSquare, Slash } from "lucide-react";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CalendarCard } from "@/components/calendar-card";
 import { FileUpload } from "@/components/file-upload";
 import Loader from "@/components/loader";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/dashboard/$orgSlug/")({
 });
 
 function OrgRouteComponent() {
+  const { t } = useTranslation();
   const { orgSlug } = Route.useParams();
   const context = Route.useRouteContext();
 
@@ -120,7 +122,7 @@ function OrgRouteComponent() {
                   className="transition-colors hover:text-foreground"
                   to="/dashboard"
                 >
-                  Dashboard
+                  {t("common.dashboard")}
                 </Link>
                 <Slash className="-rotate-12 h-3 w-3 opacity-50" />
                 <span className="font-medium text-foreground">
@@ -169,7 +171,7 @@ function OrgRouteComponent() {
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-base">
                       <MessageSquare className="h-4 w-4" />
-                      Team Chat
+                      {t("chat.teamChat")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-1 flex-col overflow-hidden pt-0">
@@ -223,7 +225,7 @@ function OrgRouteComponent() {
                       ) : (
                         <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground text-sm">
                           <MessageSquare className="h-8 w-8 opacity-20" />
-                          <p>No messages yet</p>
+                          <p>{t("chat.noMessages")}</p>
                         </div>
                       )}
                     </div>
@@ -246,7 +248,7 @@ function OrgRouteComponent() {
                             disabled={form.state.isSubmitting}
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="Type your message..."
+                            placeholder={t("chat.typeMessage")}
                             value={field.state.value}
                           />
                         )}
@@ -280,7 +282,7 @@ function OrgRouteComponent() {
       <Unauthenticated>
         <div className="mx-auto w-full max-w-7xl px-4 py-8">
           <h2 className="mt-8 font-bold text-2xl">
-            Please log in to view organization details.
+            {t("common.loginRequired")}
           </h2>
         </div>
       </Unauthenticated>

@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -37,12 +38,23 @@ export function CreateTeamDialog({
   organizationId: string;
   onCreated?: () => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const createTeam = useMutation(api.teams.createTeamInOrganization);
 
   const form = useForm({
     defaultValues: { name: "", password: "" },
-    validators: { onSubmit: schema },
+    validators: {
+      onSubmit: z.object({
+        name: z.string().min(2, t("teams.nameMinLength")),
+        password: z
+          .string()
+          .min(
+            MIN_PASSWORD_LENGTH,
+            t("teams.minPasswordLength", { count: MIN_PASSWORD_LENGTH })
+          ),
+      }),
+    },
     onSubmit: async ({ value }) => {
       try {
         await createTeam({
@@ -50,12 +62,12 @@ export function CreateTeamDialog({
           name: value.name,
           password: value.password,
         });
-        toast.success("Team created");
+        toast.success(t("teams.created"));
         setOpen(false);
         onCreated?.();
       } catch (e: unknown) {
         const message =
-          e instanceof Error ? e.message : "Failed to create team";
+          e instanceof Error ? e.message : t("teams.failedToCreate");
         toast.error(message);
       }
     },
@@ -66,16 +78,13 @@ export function CreateTeamDialog({
       <DialogTrigger asChild>
         <Button type="button" variant="default">
           <Plus />
-          Create a team
+          {t("teams.create")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new team</DialogTitle>
-          <DialogDescription>
-            Set a descriptive name and unique slug for your team within this
-            organization.
-          </DialogDescription>
+          <DialogTitle>{t("teams.createNew")}</DialogTitle>
+          <DialogDescription>{t("teams.createDescription")}</DialogDescription>
         </DialogHeader>
         <form
           className="space-y-4"
@@ -88,13 +97,13 @@ export function CreateTeamDialog({
           <form.Field name="name">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Team Name</Label>
+                <Label htmlFor={field.name}>{t("teams.name")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="e.g. Platform Squad"
+                  placeholder={t("teams.namePlaceholder")}
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
@@ -108,13 +117,13 @@ export function CreateTeamDialog({
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Team Password</Label>
+                <Label htmlFor={field.name}>{t("teams.password")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="Enter team password"
+                  placeholder={t("teams.passwordPlaceholder")}
                   type="password"
                   value={field.state.value}
                 />
@@ -133,7 +142,9 @@ export function CreateTeamDialog({
                   disabled={!state.canSubmit || state.isSubmitting}
                   type="submit"
                 >
-                  {state.isSubmitting ? "Creating..." : "Create Team"}
+                  {state.isSubmitting
+                    ? t("common.creating")
+                    : t("teams.create")}
                 </Button>
               )}
             </form.Subscribe>
@@ -143,5 +154,3 @@ export function CreateTeamDialog({
     </Dialog>
   );
 }
-
-export default CreateTeamDialog;

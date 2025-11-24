@@ -1,9 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 
 export default function UserMenu() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -23,7 +25,7 @@ export default function UserMenu() {
         variant="destructive"
       >
         <LogOut />
-        Log out
+        {t("common.logout")}
       </Button>
     </div>
   );

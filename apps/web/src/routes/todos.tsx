@@ -6,6 +6,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/todos")({
 });
 
 function TodosRoute() {
+  const { t } = useTranslation();
   const [newTodoText, setNewTodoText] = useState("");
 
   const todosQuery = useSuspenseQuery(convexQuery(api.todos.getAll, {}));
@@ -39,7 +42,7 @@ function TodosRoute() {
       try {
         await createTodo({ text });
       } catch (error) {
-        console.error("Failed to add todo:", error);
+        toast.error("Failed to add todo");
         setNewTodoText(text);
       }
     }
@@ -49,7 +52,7 @@ function TodosRoute() {
     try {
       await toggleTodo({ id, completed: !completed });
     } catch (error) {
-      console.error("Failed to toggle todo:", error);
+      toast.error("Failed to toggle todo");
     }
   };
 
@@ -57,7 +60,7 @@ function TodosRoute() {
     try {
       await removeTodo({ id });
     } catch (error) {
-      console.error("Failed to delete todo:", error);
+      toast.error("Failed to delete todo");
     }
   };
 
@@ -65,8 +68,8 @@ function TodosRoute() {
     <div className="mx-auto w-full max-w-md py-10">
       <Card>
         <CardHeader>
-          <CardTitle>Todo List (Convex)</CardTitle>
-          <CardDescription>Manage your tasks efficiently</CardDescription>
+          <CardTitle>{t("todos.title")}</CardTitle>
+          <CardDescription>{t("todos.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -75,16 +78,16 @@ function TodosRoute() {
           >
             <Input
               onChange={(e) => setNewTodoText(e.target.value)}
-              placeholder="Add a new task..."
+              placeholder={t("todos.placeholder")}
               value={newTodoText}
             />
             <Button disabled={!newTodoText.trim()} type="submit">
-              Add
+              {t("todos.add")}
             </Button>
           </form>
 
           {todos?.length === 0 ? (
-            <p className="py-4 text-center">No todos yet. Add one above!</p>
+            <p className="py-4 text-center">{t("todos.noTodos")}</p>
           ) : (
             <ul className="space-y-2">
               {todos?.map((todo) => (

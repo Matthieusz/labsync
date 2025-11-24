@@ -2,7 +2,8 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -18,20 +19,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const schema = z.object({
-  name: z.string().min(2, "Organization name must be at least 2 characters"),
-  slug: z
-    .string()
-    .min(2, "Slug must be at least 2 characters")
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Slug must be lowercase, alphanumeric, and may include hyphens"
-    ),
-});
+const SLUG_REGEX = /^[a-z0-9-]+$/;
 
 export function CreateOrganizationDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const createOrganization = useMutation(api.teams.createOrganization);
+  const createOrganization = useMutation(api.organizations.createOrganization);
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(2, t("organizations.nameMinLength")),
+        slug: z
+          .string()
+          .min(2, t("organizations.slugMinLength"))
+          .regex(SLUG_REGEX, t("organizations.slugRegex")),
+      }),
+    [t]
+  );
 
   const form = useForm({
     defaultValues: { name: "", slug: "" },
@@ -42,11 +47,11 @@ export function CreateOrganizationDialog() {
           name: value.name,
           slug: value.slug,
         });
-        toast.success("Organization created");
+        toast.success(t("organizations.created"));
         setOpen(false);
       } catch (e: unknown) {
         const message =
-          e instanceof Error ? e.message : "Failed to create organization";
+          e instanceof Error ? e.message : t("organizations.failedToCreate");
         toast.error(message);
       }
     },
@@ -57,14 +62,14 @@ export function CreateOrganizationDialog() {
       <DialogTrigger asChild>
         <Button type="button" variant="default">
           <Plus />
-          Create an organization
+          {t("organizations.create")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new organization</DialogTitle>
+          <DialogTitle>{t("organizations.createNew")}</DialogTitle>
           <DialogDescription>
-            Set a descriptive name and unique slug for your organization.
+            {t("organizations.createDescription")}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -78,13 +83,13 @@ export function CreateOrganizationDialog() {
           <form.Field name="name">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Organization Name</Label>
+                <Label htmlFor={field.name}>{t("organizations.name")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="e.g. Platform Engineering"
+                  placeholder={t("organizations.namePlaceholder")}
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
@@ -98,13 +103,13 @@ export function CreateOrganizationDialog() {
           <form.Field name="slug">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Slug</Label>
+                <Label htmlFor={field.name}>{t("organizations.slug")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="e.g. platform-engineering"
+                  placeholder={t("organizations.slugPlaceholder")}
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
@@ -122,7 +127,9 @@ export function CreateOrganizationDialog() {
                   disabled={!state.canSubmit || state.isSubmitting}
                   type="submit"
                 >
-                  {state.isSubmitting ? "Creating..." : "Create Organization"}
+                  {state.isSubmitting
+                    ? t("common.creating")
+                    : t("organizations.create")}
                 </Button>
               )}
             </form.Subscribe>

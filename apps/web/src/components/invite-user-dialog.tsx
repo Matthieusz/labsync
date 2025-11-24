@@ -2,7 +2,8 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
 import { UserPlus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const inviteFormSchema = z.object({
-  email: z
-    .email("Please enter a valid email address")
-    .min(1, "Email is required"),
-});
-
 type InviteUserDialogProps = {
   organizationId: string;
   organizationName: string;
@@ -33,8 +28,20 @@ export function InviteUserDialog({
   organizationId,
   organizationName,
 }: InviteUserDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const inviteUser = useMutation(api.teams.inviteMemberToOrganization);
+
+  const inviteFormSchema = useMemo(
+    () =>
+      z.object({
+        email: z
+          .string()
+          .email(t("organizations.validEmail"))
+          .min(1, t("organizations.emailRequired")),
+      }),
+    [t]
+  );
 
   const form = useForm({
     defaultValues: { email: "" },
@@ -50,19 +57,23 @@ export function InviteUserDialog({
         if (result.error) {
           toast.error(result.error);
         } else {
-          toast.success(`Invitation sent to ${validatedData.email}`);
+          toast.success(
+            t("organizations.invitationSent", { email: validatedData.email })
+          );
           setOpen(false);
           form.reset();
         }
       } catch (error: unknown) {
         if (error instanceof z.ZodError) {
           const firstError = error.issues[0];
-          toast.error(firstError?.message || "Validation error");
+          toast.error(
+            firstError?.message || t("organizations.validationError")
+          );
         } else {
           const message =
             error instanceof Error
               ? error.message
-              : "Failed to send invitation";
+              : t("organizations.failedToSend");
           toast.error(message);
         }
       }
@@ -74,15 +85,16 @@ export function InviteUserDialog({
       <DialogTrigger asChild>
         <Button size="sm" type="button" variant="outline">
           <UserPlus />
-          Invite Member
+          {t("organizations.inviteMember")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite user to {organizationName}</DialogTitle>
+          <DialogTitle>
+            {t("organizations.inviteUserTo", { name: organizationName })}
+          </DialogTitle>
           <DialogDescription>
-            Enter the email address of the person you'd like to invite to this
-            organization. They will receive an invitation email to join.
+            {t("organizations.inviteDescription")}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -109,7 +121,7 @@ export function InviteUserDialog({
           >
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email Address</Label>
+                <Label htmlFor={field.name}>{t("common.email")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -134,7 +146,9 @@ export function InviteUserDialog({
                   disabled={!state.canSubmit || state.isSubmitting}
                   type="submit"
                 >
-                  {state.isSubmitting ? "Sending..." : "Send Invitation"}
+                  {state.isSubmitting
+                    ? t("common.creating")
+                    : t("organizations.sendInvitation")}
                 </Button>
               )}
             </form.Subscribe>

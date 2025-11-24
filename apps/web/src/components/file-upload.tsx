@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -48,6 +49,7 @@ function FileListItem({
   file: FileItem;
   formatFileSize: (bytes: number) => string;
 }) {
+  const { t } = useTranslation();
   const fileUrl = useQuery(api.files.getFileUrl, {
     storageId: file.storageId,
   });
@@ -66,13 +68,13 @@ function FileListItem({
             <span>{formatFileSize(file.fileSize)}</span>
             <span>•</span>
             <span className="max-w-[100px] truncate">
-              {file.fileType || "Unknown type"}
+              {file.fileType || t("files.unknownType")}
             </span>
           </div>
         </div>
       </div>
       <Button
-        aria-label={`Download ${file.fileName}`}
+        aria-label={`${t("files.download")} ${file.fileName}`}
         className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
         disabled={!fileUrl?.data}
         onClick={() => {
@@ -91,6 +93,7 @@ function FileListItem({
 }
 
 export function FileUpload({ organizationId, userId }: FileUploadProps) {
+  const { t } = useTranslation();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const saveFile = useMutation(api.files.saveFile);
   const filesResult = useQuery(api.files.getFilesByOrganization, {
@@ -160,79 +163,84 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
     return `${(bytes / MB).toFixed(1)} MB`;
   }, []);
 
+  const files = filesResult?.data || [];
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleUpload = (e: React.MouseEvent) => {
+    handleFileUpload(e as unknown as React.FormEvent);
+  };
+
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="pb-4">
+    <Card className="flex h-full flex-col">
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <FileIcon className="h-4 w-4" />
-          Files
+          <FileText className="h-4 w-4" />
+          {t("files.title")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 space-y-4">
-        <form
-          aria-label="Upload a file"
-          className="flex flex-col gap-4"
-          onSubmit={handleFileUpload}
-        >
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Input
-                accept="*/*"
-                aria-label="Select file to upload"
-                className="cursor-pointer pr-8 file:cursor-pointer file:text-foreground"
-                disabled={isUploading}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setSelectedFile(file);
-                  }
-                }}
-                ref={fileInputRef}
-                type="file"
-              />
-              {selectedFile && (
-                <button
-                  className="-translate-y-1/2 absolute top-1/2 right-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  onClick={() => {
-                    setSelectedFile(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = "";
-                    }
-                  }}
-                  type="button"
-                >
-                  <X className="h-4 w-4" />
-                  <span className="sr-only">Clear selected file</span>
-                </button>
-              )}
-            </div>
-            <Button
-              aria-label="Upload file"
-              disabled={!selectedFile || isUploading}
-              size="icon"
-              type="submit"
-            >
-              <Upload className="h-4 w-4" />
-            </Button>
+      <CardContent className="flex flex-1 flex-col gap-4">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Input
+              className="cursor-pointer pr-10 file:cursor-pointer file:text-foreground"
+              disabled={isUploading}
+              onChange={handleFileSelect}
+              type="file"
+            />
+            {selectedFile && (
+              <Button
+                className="-translate-y-1/2 absolute top-1/2 right-1 h-8 w-8 text-muted-foreground hover:text-foreground"
+                onClick={clearSelection}
+                size="icon"
+                type="button"
+                variant="ghost"
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">{t("common.cancel")}</span>
+              </Button>
+            )}
           </div>
-          {selectedFile && (
-            <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 text-muted-foreground text-xs">
-              <FileIcon className="h-3.5 w-3.5" />
-              <span className="font-medium text-foreground">
-                {selectedFile.name}
-              </span>
-              <span>({formatFileSize(selectedFile.size)})</span>
-            </div>
-          )}
-        </form>
+          <Button
+            disabled={!selectedFile || isUploading}
+            onClick={handleUpload}
+            size="sm"
+          >
+            {isUploading ? (
+              <>
+                <Upload className="mr-2 h-4 w-4 animate-bounce" />
+                {t("files.uploading")}
+              </>
+            ) : (
+              <>
+                <Upload className="mr-2 h-4 w-4" />
+                {t("files.upload")}
+              </>
+            )}
+          </Button>
+        </div>
 
-        <div className="space-y-3">
-          <h3 className="font-medium text-muted-foreground text-sm">
-            Uploaded Files
-          </h3>
-          {filesResult?.data && filesResult.data.length > 0 ? (
-            <ul className="space-y-2">
-              {filesResult.data.map((file) => (
+        <div className="flex-1 overflow-hidden rounded-md border bg-muted/30">
+          {files.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center gap-2 p-4 text-center text-muted-foreground text-sm">
+              <FileText className="h-8 w-8 opacity-20" />
+              <p>{t("files.noFiles")}</p>
+            </div>
+          ) : (
+            <ul className="h-full space-y-2 overflow-y-auto p-2">
+              {files.map((file) => (
                 <FileListItem
                   file={file}
                   formatFileSize={formatFileSize}
@@ -240,13 +248,6 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
                 />
               ))}
             </ul>
-          ) : (
-            <div className="flex h-32 flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-center">
-              <FileIcon className="h-8 w-8 text-muted-foreground/50" />
-              <p className="text-muted-foreground text-sm">
-                No files uploaded yet.
-              </p>
-            </div>
           )}
         </div>
       </CardContent>

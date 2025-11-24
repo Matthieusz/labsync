@@ -3,6 +3,7 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 
@@ -25,6 +26,7 @@ const TITLE_TEXT = `
 `;
 
 function HomeComponent() {
+  const { t } = useTranslation();
   const [showSignIn, setShowSignIn] = useState(false);
   const healthCheck = useQuery(convexQuery(api.healthCheck.get, {}));
 
@@ -35,17 +37,17 @@ function HomeComponent() {
       </pre>
       <div className="mt-8 grid flex-col items-center justify-center gap-2 md:flex">
         <section className="w-32 rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
+          <h2 className="mb-2 font-medium">{t("home.apiStatus")}</h2>
           <div className="flex items-center gap-2">
             <div
               className={`h-2 w-2 rounded-full ${healthCheck.data === "OK" ? "bg-green-500" : healthCheck.isLoading ? "bg-orange-400" : "bg-red-500"}`}
             />
             <span className="text-muted-foreground text-sm">
               {healthCheck.isLoading
-                ? "Checking..."
+                ? t("home.checking")
                 : healthCheck.data === "OK"
-                  ? "Connected"
-                  : "Error"}
+                  ? t("home.connected")
+                  : t("home.error")}
             </span>
           </div>
         </section>
