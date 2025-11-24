@@ -8,7 +8,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { ArrowRight, Building2, LogIn, Plus, Users } from "lucide-react";
+import { ArrowRight, Building2, LogIn, Users } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -86,7 +86,6 @@ function RouteComponent() {
             </div>
             <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
               <div className="flex items-center gap-2">
-                <CreateOrganizationDialog />
                 <UserMenu />
               </div>
             </div>
@@ -101,6 +100,7 @@ function RouteComponent() {
               <h2 className="font-semibold text-xl tracking-tight">
                 {t("organizations.yourOrganizations")}
               </h2>
+              <CreateOrganizationDialog />
             </div>
             {/* Error handling */}
             {orgs.error && (

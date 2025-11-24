@@ -21,16 +21,6 @@ import { Label } from "@/components/ui/label";
 
 const MIN_PASSWORD_LENGTH = 6;
 
-const schema = z.object({
-  name: z.string().min(2, "Team name must be at least 2 characters"),
-  password: z
-    .string()
-    .min(
-      MIN_PASSWORD_LENGTH,
-      `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
-    ),
-});
-
 export function CreateTeamDialog({
   organizationId,
   onCreated,
