@@ -30,7 +30,7 @@ export function InviteUserDialog({
 }: InviteUserDialogProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const inviteUser = useMutation(api.teams.inviteMemberToOrganization);
+  const inviteUser = useMutation(api.organizations.inviteMemberToOrganization);
 
   const inviteFormSchema = useMemo(
     () =>
