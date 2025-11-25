@@ -128,6 +128,7 @@ export default {
   },
   calendar: {
     title: "Kalendarz",
+    description: "Zarządzaj swoimi egzaminami i ważnymi datami",
     upcomingExams: "Nadchodzące egzaminy",
     noExams: "Brak zaplanowanych egzaminów na ten dzień.",
     addExam: "Dodaj egzamin",

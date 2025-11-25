@@ -128,6 +128,7 @@ export default {
   },
   calendar: {
     title: "Calendar",
+    description: "Manage your exams and important dates",
     upcomingExams: "Upcoming Exams",
     noExams: "No exams scheduled for this date.",
     addExam: "Add Exam",
