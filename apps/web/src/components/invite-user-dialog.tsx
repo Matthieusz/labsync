@@ -36,7 +36,6 @@ export function InviteUserDialog({
     () =>
       z.object({
         email: z
-          .string()
           .email(t("organizations.validEmail"))
           .min(1, t("organizations.emailRequired")),
       }),

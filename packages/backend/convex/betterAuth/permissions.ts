@@ -10,10 +10,21 @@ const { team: _omitTeam, ...baseStatements } = defaultStatements as Record<
 
 export const statement = {
   ...baseStatements,
+  invitation: ["create", "cancel"],
   team: ["create", "update", "delete"],
 } as const;
 
 export const ac = createAccessControl(statement);
+
+export const owner = ac.newRole({
+  invitation: ["create", "cancel"],
+  team: ["create", "update", "delete"],
+} as const);
+
+export const admin = ac.newRole({
+  invitation: ["create", "cancel"],
+  team: ["create", "update", "delete"],
+} as const);
 
 // Override the default member role to allow creating teams
 export const member = ac.newRole({

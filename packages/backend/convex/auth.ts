@@ -6,7 +6,7 @@ import { organization } from "better-auth/plugins/organization";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
-import { ac, member } from "./betterAuth/permissions";
+import { ac, admin, member, owner } from "./betterAuth/permissions";
 import authSchema from "./betterAuth/schema";
 
 const siteUrl = process.env.SITE_URL as string;
@@ -41,6 +41,8 @@ export const createAuth = (
         ac,
         roles: {
           member,
+          owner,
+          admin,
         },
         teams: {
           enabled: true,
