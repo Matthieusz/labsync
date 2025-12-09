@@ -6,7 +6,9 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { ChevronDown, ChevronUp, FlaskConical, Info } from "lucide-react";
 import { useState } from "react";
 import { ChatCard } from "@/components/chat-card";
+import { FileUpload } from "@/components/file-upload";
 import Loader from "@/components/loader";
+import { MemberList } from "@/components/member-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UserMenu from "@/components/user-menu";
@@ -125,95 +127,27 @@ function TeamRouteComponent() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-8">
-              {team ? (
-                <Card className="overflow-hidden">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <Info className="h-4 w-4" />
-                        Team Details
-                      </CardTitle>
-                      <Button
-                        onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                        size="sm"
-                        type="button"
-                        variant="ghost"
-                      >
-                        {isDetailsExpanded ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  {isDetailsExpanded ? (
-                    <CardContent>
-                      <dl className="space-y-4 text-sm">
-                        <div className="flex flex-col gap-1">
-                          <dt className="text-muted-foreground text-xs">
-                            Team Name
-                          </dt>
-                          <dd className="font-medium">{team.name}</dd>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <dt className="text-muted-foreground text-xs">
-                            Team ID
-                          </dt>
-                          <dd className="font-mono text-xs">{team.id}</dd>
-                        </div>
-                        {createdAtLabel && (
-                          <div className="flex flex-col gap-1">
-                            <dt className="text-muted-foreground text-xs">
-                              Created
-                            </dt>
-                            <dd className="font-medium">{createdAtLabel}</dd>
-                          </div>
-                        )}
-                      </dl>
-                    </CardContent>
-                  ) : null}
-                </Card>
-              ) : (
-                <Card className="overflow-hidden">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">Team Details</CardTitle>
-                      <Button
-                        onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                        size="sm"
-                        type="button"
-                        variant="ghost"
-                      >
-                        {isDetailsExpanded ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  {isDetailsExpanded ? (
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm">
-                        {fallbackMessage ??
-                          "Team details are currently unavailable."}
-                      </p>
-                    </CardContent>
-                  ) : null}
-                </Card>
-              )}
-            </div>
+            <div className="space-y-8 lg:col-span-2">
+              {userId ? (
+                <FileUpload organizationId={organizationId} userId={userId} />
+              ) : null}
 
-            {/* Team Chat Feature */}
-            <div className="lg:col-span-2">
+              {/* Team Chat Feature */}
               {userId ? (
                 <ChatCard
                   height="550px"
                   membersById={membersById}
                   teamId={teamId}
                   userId={userId}
+                />
+              ) : null}
+            </div>
+
+            <div className="space-y-8">
+              {orgResult.data ? (
+                <MemberList
+                  orgSlug={orgSlug}
+                  result={{ data: orgResult.data }}
                 />
               ) : null}
             </div>
