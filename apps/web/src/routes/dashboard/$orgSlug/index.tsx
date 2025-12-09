@@ -3,7 +3,7 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { Slash } from "lucide-react";
+import { FlaskConical, Slash } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarCard } from "@/components/calendar-card";
@@ -58,6 +58,16 @@ function OrgRouteComponent() {
     <>
       <Authenticated>
         <div className="mx-auto w-full max-w-7xl px-4 py-8">
+          <div className="mb-6 flex items-center justify-between border-b pb-4">
+            <Link
+              className="flex items-center gap-2 transition-colors hover:opacity-80"
+              to="/dashboard"
+            >
+              <FlaskConical className="h-6 w-6 text-primary" />
+              <span className="font-bold text-xl">LabSync</span>
+            </Link>
+            <UserMenu />
+          </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <div className="mb-1 flex items-center gap-2 text-muted-foreground text-sm">
@@ -80,9 +90,6 @@ function OrgRouteComponent() {
                   {result.error}
                 </p>
               )}
-            </div>
-            <div className="flex items-center gap-2">
-              <UserMenu />
             </div>
           </div>
 

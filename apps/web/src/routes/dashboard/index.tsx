@@ -8,7 +8,13 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { ArrowRight, Building2, LogIn, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  FlaskConical,
+  LogIn,
+  Users,
+} from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -77,17 +83,23 @@ function RouteComponent() {
     <>
       <Authenticated>
         <div className="mx-auto w-full max-w-7xl px-4 py-8">
+          {/* App Logo */}
+          <div className="mb-6 flex items-center justify-between border-b pb-4">
+            <Link
+              className="flex items-center gap-2 transition-colors hover:opacity-80"
+              to="/dashboard"
+            >
+              <FlaskConical className="h-6 w-6 text-primary" />
+              <span className="font-bold text-xl">LabSync</span>
+            </Link>
+            <UserMenu />
+          </div>
           {/* Page header */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <h1 className="font-semibold text-2xl tracking-tight">
                 {t("common.dashboard")}
               </h1>
-            </div>
-            <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
-              <div className="flex items-center gap-2">
-                <UserMenu />
-              </div>
             </div>
           </div>
 

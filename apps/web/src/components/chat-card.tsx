@@ -188,7 +188,10 @@ function ChatCardInner({
   }, []);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
     setShowScrollButton(false);
     setHasNewMessages(false);
   }, []);
@@ -224,8 +227,8 @@ function ChatCardInner({
 
     if (hasNewMessage) {
       if (isNearBottom || !hadPreviousMessages) {
-        // User is near bottom or this is initial load - auto scroll
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        // User is near bottom or this is initial load - scroll within container only
+        container.scrollTop = container.scrollHeight;
       } else {
         // User scrolled up - show notification
         setShowScrollButton(true);
