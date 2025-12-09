@@ -18,6 +18,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest } from "@tanstack/react-start/server";
 import type { ConvexReactClient } from "convex/react";
 import Loader from "@/components/loader";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 import appCss from "../index.css?url";
@@ -82,13 +83,15 @@ function RootDocument() {
       authClient={authClient}
       client={context.convexClient}
     >
-      <html className="dark" lang="en">
+      <html lang="en" suppressHydrationWarning>
         <HeadContent />
         <body>
-          <div className="flex h-screen flex-col">
-            {isFetching ? <Loader /> : <Outlet />}
-          </div>
-          <Toaster richColors />
+          <ThemeProvider defaultTheme="dark">
+            <div className="flex h-screen flex-col">
+              {isFetching ? <Loader /> : <Outlet />}
+            </div>
+            <Toaster richColors />
+          </ThemeProvider>
           <TanStackRouterDevtools position="bottom-left" />
           <Scripts />
         </body>

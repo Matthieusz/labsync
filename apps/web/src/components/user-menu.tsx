@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { authClient } from "@/lib/auth-client";
 import { LanguageSwitcher } from "./language-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 import { Button } from "./ui/button";
 
 export default function UserMenu() {
@@ -13,6 +14,7 @@ export default function UserMenu() {
 
   return (
     <div className="flex items-center gap-2">
+      <ThemeSwitcher />
       <LanguageSwitcher />
       {user && (
         <div className="mr-2 flex flex-col items-end text-right">
