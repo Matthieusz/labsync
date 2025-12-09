@@ -67,6 +67,11 @@ function ExamItem({ exam, onDelete, dateDisplay, deleteLabel }: ExamItemProps) {
       <div className="flex-1 space-y-0.5">
         <div className="font-medium text-sm">{exam.title}</div>
         <div className="text-muted-foreground text-xs">{dateDisplay}</div>
+        {exam.description ? (
+          <div className="text-muted-foreground text-xs italic">
+            {exam.description}
+          </div>
+        ) : null}
       </div>
       <Button
         aria-label={deleteLabel}
@@ -217,7 +222,9 @@ function CreateExamDialog({
           <DialogDescription>
             {selectedDate
               ? t("calendar.createExamFor", {
-                  date: format(selectedDate, "EEEE, MMMM d, yyyy"),
+                  date: format(selectedDate, "EEEE,d MMMM, yyyy", {
+                    locale: dateLocale,
+                  }),
                 })
               : t("calendar.createExamDescription")}
           </DialogDescription>
@@ -244,7 +251,7 @@ function CreateExamDialog({
               >
                 <CalendarDays className="mr-2 h-4 w-4" />
                 {selectedDate
-                  ? format(selectedDate, "EEEE, MMMM d, yyyy", {
+                  ? format(selectedDate, "EEEE, d MMMM, yyyy", {
                       locale: dateLocale,
                     })
                   : t("calendar.selectDate")}
@@ -370,8 +377,9 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
   }, [exams]);
 
   const formatExamDate = useCallback(
-    (timestamp: number) => format(new Date(timestamp), "MMM d, yyyy"),
-    []
+    (timestamp: number) =>
+      format(new Date(timestamp), "PPP", { locale: dateLocale }),
+    [dateLocale]
   );
 
   const formatRelativeDate = useCallback(
