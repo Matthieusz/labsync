@@ -10,6 +10,8 @@ const { team: _omitTeam, ...baseStatements } = defaultStatements as Record<
 
 export const statement = {
   ...baseStatements,
+  organization: ["update", "delete"],
+  member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
   team: ["create", "update", "delete"],
 } as const;
@@ -17,11 +19,15 @@ export const statement = {
 export const ac = createAccessControl(statement);
 
 export const owner = ac.newRole({
+  organization: ["update", "delete"],
+  member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
   team: ["create", "update", "delete"],
 } as const);
 
 export const admin = ac.newRole({
+  organization: ["update"],
+  member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
   team: ["create", "update", "delete"],
 } as const);
