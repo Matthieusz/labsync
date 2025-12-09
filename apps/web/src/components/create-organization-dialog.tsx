@@ -93,7 +93,7 @@ export function CreateOrganizationDialog() {
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
-                  <p className="text-red-500 text-sm" key={err?.message}>
+                  <p className="text-destructive text-sm" key={err?.message}>
                     {err?.message}
                   </p>
                 ))}
@@ -113,7 +113,7 @@ export function CreateOrganizationDialog() {
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
-                  <p className="text-red-500 text-sm" key={err?.message}>
+                  <p className="text-destructive text-sm" key={err?.message}>
                     {err?.message}
                   </p>
                 ))}
