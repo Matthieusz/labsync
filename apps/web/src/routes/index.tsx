@@ -30,6 +30,26 @@ function HomeComponent() {
   const [showSignIn, setShowSignIn] = useState(false);
   const healthCheck = useQuery(convexQuery(api.healthCheck.get, {}));
 
+  const getStatusColor = () => {
+    if (healthCheck.isLoading) {
+      return "bg-warning";
+    }
+    if (healthCheck.data === "OK") {
+      return "bg-success";
+    }
+    return "bg-destructive";
+  };
+
+  const getStatusText = () => {
+    if (healthCheck.isLoading) {
+      return t("home.checking");
+    }
+    if (healthCheck.data === "OK") {
+      return t("home.connected");
+    }
+    return t("home.error");
+  };
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto text-center font-mono text-sm">
@@ -39,15 +59,9 @@ function HomeComponent() {
         <section className="w-32 rounded-lg border p-4">
           <h2 className="mb-2 font-medium">{t("home.apiStatus")}</h2>
           <div className="flex items-center gap-2">
-            <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data === "OK" ? "bg-green-500" : healthCheck.isLoading ? "bg-orange-400" : "bg-red-500"}`}
-            />
+            <div className={`h-2 w-2 rounded-full ${getStatusColor()}`} />
             <span className="text-muted-foreground text-sm">
-              {healthCheck.isLoading
-                ? t("home.checking")
-                : healthCheck.data === "OK"
-                  ? t("home.connected")
-                  : t("home.error")}
+              {getStatusText()}
             </span>
           </div>
         </section>
