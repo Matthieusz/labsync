@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { calendarClassNames, hasExamClassName } from "./calendar-class-names";
-import { CreateExamDialog } from "./create-exam-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { calendarClassNames, hasExamClassName } from "./calendar-class-names";
+import { CreateExamDialog } from "./create-exam-dialog";
 
 // Constants
 const SECONDS_PER_MINUTE = 60;
