@@ -14,7 +14,10 @@
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F @labsync/backend dev",
-    "dev:setup": "turbo -F @labsync/backend dev:setup"
+    "dev:setup": "turbo -F @labsync/backend dev:setup",
+    "test": "turbo test:once",
+    "test:watch": "turbo test",
+    "test:coverage": "turbo test:coverage"
   },
   "dependencies": {},
   "devDependencies": {

@@ -20,6 +20,18 @@
     "dev:setup": {
       "cache": false,
       "persistent": true
+    },
+    "test": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:once": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "cache": false
     }
   }
 }

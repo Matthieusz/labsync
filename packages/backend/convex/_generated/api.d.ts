@@ -17,7 +17,6 @@ import type * as messages from "../messages.js";
 import type * as organizations from "../organizations.js";
 import type * as privateData from "../privateData.js";
 import type * as teams from "../teams.js";
-import type * as todos from "../todos.js";
 
 import type {
   ApiFromModules,
@@ -35,7 +34,6 @@ declare const fullApi: ApiFromModules<{
   organizations: typeof organizations;
   privateData: typeof privateData;
   teams: typeof teams;
-  todos: typeof todos;
 }>;
 
 /**

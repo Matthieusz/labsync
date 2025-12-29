@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "convex dev",
-    "dev:setup": "convex dev --configure --until-success"
+    "dev:setup": "convex dev --configure --until-success",
+    "test": "vitest",
+    "test:once": "vitest run",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@types/node": "^24.9.2",
-    "typescript": "^5.9.3"
+    "convex-test": "^0.0.41",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
   },
   "dependencies": {
     "@convex-dev/better-auth": "0.9.7",
