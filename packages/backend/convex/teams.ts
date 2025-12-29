@@ -67,6 +67,7 @@ export const createTeamInOrganization = mutation({
           },
         });
       } catch (memberErr) {
+        // biome-ignore lint/suspicious/noConsole: Convex server logging
         console.error("Failed to add team member:", memberErr);
         return {
           error:

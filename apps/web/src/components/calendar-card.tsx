@@ -1,7 +1,6 @@
 import { api } from "@labsync/backend/convex/_generated/api";
 import type { Id } from "@labsync/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import type { Locale } from "date-fns";
 import { format, isBefore, startOfDay } from "date-fns";
 import { enUS, pl as plLocale } from "date-fns/locale";
 import {
@@ -13,20 +12,11 @@ import {
 } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { calendarClassNames, hasExamClassName } from "./calendar-class-names";
+import { CreateExamDialog } from "./create-exam-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 
 // Constants
 const SECONDS_PER_MINUTE = 60;
@@ -132,175 +122,6 @@ function UpcomingExamsList({
         />
       ))}
     </ul>
-  );
-}
-
-// Calendar classNames configuration
-const calendarClassNames = {
-  months: "flex flex-col space-y-4 sm:space-x-4 sm:space-y-0",
-  month: "w-full space-y-4",
-  caption: "flex items-center justify-center gap-1 pt-1",
-  caption_label: "font-medium text-sm",
-  nav: "flex items-center gap-1",
-  nav_button: cn(
-    "inline-flex h-7 w-7 items-center justify-center rounded-md border border-input bg-transparent p-0 opacity-50 hover:bg-accent hover:text-accent-foreground hover:opacity-100"
-  ),
-  nav_button_previous: "",
-  nav_button_next: "",
-  table: "w-full space-y-1 border-collapse",
-  head_row: "flex",
-  head_cell:
-    "flex-1 w-9 rounded-md text-center font-normal text-[0.8rem] text-muted-foreground",
-  row: "mt-2 flex w-full",
-  cell: cn(
-    "relative flex-1 p-0 text-center text-sm focus-within:relative focus-within:z-20",
-    "[&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md"
-  ),
-  day: cn(
-    "mx-auto inline-flex h-9 w-9 items-center justify-center rounded-md p-0 font-normal hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground aria-selected:opacity-100"
-  ),
-  day_range_end: "day-range-end",
-  day_selected:
-    "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-  day_today: "bg-accent font-semibold text-accent-foreground",
-  day_outside:
-    "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-  day_disabled: "cursor-not-allowed text-muted-foreground opacity-50",
-  day_hidden: "invisible",
-};
-
-const hasExamClassName = cn(
-  "relative font-semibold text-primary",
-  "after:-translate-x-1/2 after:absolute after:bottom-0.5 after:left-1/2 after:h-1.5 after:w-1.5 after:rounded-full after:bg-primary after:content-['']"
-);
-
-// Create Exam Dialog component
-type CreateExamDialogProps = {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedDate: Date | undefined;
-  onDateChange: (date: Date | undefined) => void;
-  onSubmit: (title: string, description: string) => Promise<void>;
-  dateLocale: Locale;
-};
-
-function CreateExamDialog({
-  isOpen,
-  onOpenChange,
-  selectedDate,
-  onDateChange,
-  onSubmit,
-  dateLocale,
-}: CreateExamDialogProps) {
-  const { t } = useTranslation();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [showCalendar, setShowCalendar] = useState(false);
-  const today = startOfDay(new Date());
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmedTitle = title.trim();
-    if (!trimmedTitle) {
-      return;
-    }
-    await onSubmit(trimmedTitle, description);
-    setTitle("");
-    setDescription("");
-    setShowCalendar(false);
-  };
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      onDateChange(date);
-      setShowCalendar(false);
-    }
-  };
-
-  const isPastDate = (date: Date) => isBefore(startOfDay(date), today);
-
-  return (
-    <Dialog onOpenChange={onOpenChange} open={isOpen}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("calendar.createExam")}</DialogTitle>
-          <DialogDescription>
-            {selectedDate
-              ? t("calendar.createExamFor", {
-                  date: format(selectedDate, "EEEE,d MMMM, yyyy", {
-                    locale: dateLocale,
-                  }),
-                })
-              : t("calendar.createExamDescription")}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="exam-title">{t("calendar.examTitle")}</Label>
-              <Input
-                id="exam-title"
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={t("calendar.examTitlePlaceholder")}
-                required
-                value={title}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label>{t("calendar.selectedDate")}</Label>
-              <Button
-                className="w-full justify-start text-left font-normal"
-                onClick={() => setShowCalendar(!showCalendar)}
-                type="button"
-                variant="outline"
-              >
-                <CalendarDays className="mr-2 h-4 w-4" />
-                {selectedDate
-                  ? format(selectedDate, "EEEE, d MMMM, yyyy", {
-                      locale: dateLocale,
-                    })
-                  : t("calendar.selectDate")}
-              </Button>
-              {showCalendar && (
-                <div className="rounded-md border p-3">
-                  <Calendar
-                    classNames={calendarClassNames}
-                    disabled={isPastDate}
-                    locale={dateLocale}
-                    mode="single"
-                    onSelect={handleDateSelect}
-                    selected={selectedDate}
-                  />
-                </div>
-              )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="exam-description">
-                {t("calendar.descriptionLabel")}
-              </Label>
-              <Input
-                id="exam-description"
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={t("calendar.descriptionPlaceholder")}
-                value={description}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={() => onOpenChange(false)}
-              type="button"
-              variant="outline"
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button disabled={!title.trim()} type="submit">
-              {t("calendar.createExam")}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }
 
