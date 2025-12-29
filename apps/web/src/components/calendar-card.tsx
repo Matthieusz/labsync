@@ -11,7 +11,7 @@ import {
   Clock,
   Trash2,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -53,7 +53,7 @@ type Exam = {
   teamId?: string;
 };
 
-// Sub-component for exam item in list
+// Sub-component for exam item in list - memoized for performance
 type ExamItemProps = {
   exam: Exam;
   onDelete: (id: Id<"exams">) => void;
@@ -61,7 +61,12 @@ type ExamItemProps = {
   deleteLabel: string;
 };
 
-function ExamItem({ exam, onDelete, dateDisplay, deleteLabel }: ExamItemProps) {
+const ExamItem = memo(function ExamItemInner({
+  exam,
+  onDelete,
+  dateDisplay,
+  deleteLabel,
+}: ExamItemProps) {
   return (
     <li className="group flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50">
       <div className="flex-1 space-y-0.5">
@@ -85,7 +90,7 @@ function ExamItem({ exam, onDelete, dateDisplay, deleteLabel }: ExamItemProps) {
       </Button>
     </li>
   );
-}
+});
 
 // Upcoming exams list component
 type UpcomingExamsListProps = {
@@ -417,6 +422,7 @@ export function CalendarCard({ organizationId, userId }: CalendarCardProps) {
             </div>
           </div>
           <Button
+            aria-label={isExpanded ? t("common.collapse") : t("common.expand")}
             onClick={() => setIsExpanded(!isExpanded)}
             size="sm"
             type="button"

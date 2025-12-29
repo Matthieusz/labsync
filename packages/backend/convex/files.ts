@@ -74,3 +74,27 @@ export const getFileUrl = query({
     }
   },
 });
+
+// Get multiple file URLs in a single query (batched)
+export const getFileUrls = query({
+  args: { storageIds: v.array(v.id("_storage")) },
+  handler: async (ctx, args) => {
+    try {
+      const urlPromises = args.storageIds.map(async (storageId) => {
+        const url = await ctx.storage.getUrl(storageId);
+        return { storageId, url };
+      });
+      const results = await Promise.all(urlPromises);
+      const urlMap: Record<string, string | null> = {};
+      for (const { storageId, url } of results) {
+        urlMap[storageId] = url;
+      }
+      return { data: urlMap, error: undefined };
+    } catch (err) {
+      return {
+        data: {},
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  },
+});

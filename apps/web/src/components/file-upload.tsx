@@ -22,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import {
@@ -213,11 +213,13 @@ function FileListContent({
   files,
   filteredAndSortedFiles,
   formatFileSize,
+  fileUrls,
   t,
 }: {
   files: FileItem[];
   filteredAndSortedFiles: FileItem[];
   formatFileSize: (bytes: number) => string;
+  fileUrls: Record<string, string | null>;
   t: (key: string) => string;
 }) {
   if (files.length === 0) {
@@ -245,6 +247,7 @@ function FileListContent({
       {filteredAndSortedFiles.map((file) => (
         <FileListItem
           file={file}
+          fileUrl={fileUrls[file.storageId] ?? null}
           formatFileSize={formatFileSize}
           key={file._id}
         />
@@ -253,17 +256,17 @@ function FileListContent({
   );
 }
 
-function FileListItem({
+// File list item component - memoized for performance in lists
+const FileListItem = memo(function FileListItemInner({
   file,
+  fileUrl,
   formatFileSize,
 }: {
   file: FileItem;
+  fileUrl: string | null;
   formatFileSize: (bytes: number) => string;
 }) {
   const { t } = useTranslation();
-  const fileUrl = useQuery(api.files.getFileUrl, {
-    storageId: file.storageId,
-  });
 
   const iconColorClass = getFileIconColor(file.fileType);
 
@@ -299,10 +302,10 @@ function FileListItem({
       <Button
         aria-label={`${t("files.download")} ${file.fileName}`}
         className="h-8 w-8 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-        disabled={!fileUrl?.data}
+        disabled={!fileUrl}
         onClick={() => {
-          if (fileUrl?.data) {
-            window.open(fileUrl.data, "_blank");
+          if (fileUrl) {
+            globalThis.open(fileUrl, "_blank");
           }
         }}
         size="icon"
@@ -313,7 +316,7 @@ function FileListItem({
       </Button>
     </li>
   );
-}
+});
 
 // Upload area component with drag and drop
 function UploadArea({
@@ -452,6 +455,16 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
     organizationId,
   });
 
+  const files = filesResult?.data ?? [];
+
+  // Batch fetch all file URLs at once instead of individual queries per file
+  const storageIds = useMemo(() => files.map((f) => f.storageId), [files]);
+  const fileUrlsResult = useQuery(
+    api.files.getFileUrls,
+    storageIds.length > 0 ? { storageIds } : "skip"
+  );
+  const fileUrls = fileUrlsResult?.data ?? {};
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -528,8 +541,6 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
     }
     return `${(bytes / MB).toFixed(1)} MB`;
   }, []);
-
-  const files = filesResult?.data || [];
 
   // Filter and sort files
   const filteredAndSortedFiles = useMemo(() => {
@@ -645,6 +656,9 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
           </div>
           <div className="flex items-center gap-1">
             <Button
+              aria-label={
+                isExpanded ? t("common.collapse") : t("common.expand")
+              }
               onClick={() => setIsExpanded(!isExpanded)}
               size="sm"
               type="button"
@@ -778,6 +792,7 @@ export function FileUpload({ organizationId, userId }: FileUploadProps) {
           <div className="max-h-80 flex-1 overflow-hidden rounded-lg border bg-muted/20">
             <FileListContent
               files={files}
+              fileUrls={fileUrls}
               filteredAndSortedFiles={filteredAndSortedFiles}
               formatFileSize={formatFileSize}
               t={t}

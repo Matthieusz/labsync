@@ -41,6 +41,9 @@ export const TeamList = ({
           <div className="flex items-center gap-1">
             <CreateTeamDialog organizationId={organizationId} />
             <Button
+              aria-label={
+                isJoinedExpanded ? t("common.collapse") : t("common.expand")
+              }
               onClick={() => setIsJoinedExpanded(!isJoinedExpanded)}
               size="sm"
               type="button"
@@ -106,6 +109,9 @@ export const TeamList = ({
             {t("teams.availableTeams")}
           </CardTitle>
           <Button
+            aria-label={
+              isAvailableExpanded ? t("common.collapse") : t("common.expand")
+            }
             onClick={() => setIsAvailableExpanded(!isAvailableExpanded)}
             size="sm"
             type="button"

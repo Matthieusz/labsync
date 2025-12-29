@@ -96,6 +96,56 @@ export const getOrganizationMembersBySlug = query({
   },
 });
 
+// Helper to fetch members for multiple organizations in parallel with batching
+async function fetchMembersForOrganizations(
+  auth: {
+    api: {
+      listMembers: (opts: {
+        headers: Headers;
+        query: { organizationId: string };
+      }) => Promise<{
+        members?: Array<{
+          role: string;
+          user?: { name?: string; email?: string };
+        }>;
+      }>;
+    };
+  },
+  headers: Headers,
+  orgIds: string[]
+): Promise<
+  Map<string, Array<{ role: string; user?: { name?: string; email?: string } }>>
+> {
+  // Batch requests with a reasonable concurrency limit to avoid overwhelming the API
+  const BATCH_SIZE = 5;
+  const results = new Map<
+    string,
+    Array<{ role: string; user?: { name?: string; email?: string } }>
+  >();
+
+  for (let i = 0; i < orgIds.length; i += BATCH_SIZE) {
+    const batch = orgIds.slice(i, i + BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async (orgId) => {
+        const membersRes = await auth.api.listMembers({
+          headers,
+          query: { organizationId: orgId },
+        });
+        return {
+          orgId,
+          members: Array.isArray(membersRes?.members) ? membersRes.members : [],
+        };
+      })
+    );
+
+    for (const { orgId, members } of batchResults) {
+      results.set(orgId, members);
+    }
+  }
+
+  return results;
+}
+
 export const listOrganizationsWithOwners = query({
   args: {},
   handler: async (ctx) => {
@@ -111,29 +161,38 @@ export const listOrganizationsWithOwners = query({
           error: "Failed to fetch organizations: orgs is not an array",
         };
       }
-      const results = await Promise.all(
-        orgs.map(async (org: { id: string; name: string; slug?: string }) => {
-          const membersRes = await auth.api.listMembers({
-            headers,
-            query: { organizationId: org.id },
-          });
-          const arr: Array<{
-            role: string;
-            user?: { name?: string; email?: string };
-          }> = Array.isArray(membersRes?.members) ? membersRes.members : [];
-          const owner = arr.find((m) => m.role === "owner");
+
+      // Early return if no organizations
+      if (orgs.length === 0) {
+        return { data: [], error: undefined };
+      }
+
+      // Fetch all members in batched parallel requests
+      const orgIds = orgs.map((org: { id: string }) => org.id);
+      const membersMap = await fetchMembersForOrganizations(
+        auth,
+        headers,
+        orgIds
+      );
+
+      // Map organizations with their member data
+      const results = orgs.map(
+        (org: { id: string; name: string; slug?: string }) => {
+          const members = membersMap.get(org.id) ?? [];
+          const owner = members.find((m) => m.role === "owner");
           return {
             id: org.id,
             name: org.name,
             slug: org.slug,
-            memberCount: arr.length,
+            memberCount: members.length,
             owner: {
               name: owner?.user?.name,
               email: owner?.user?.email,
             },
           };
-        })
+        }
       );
+
       return { data: results, error: undefined };
     } catch (err) {
       return {

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error-handling";
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -55,16 +56,21 @@ export function CreateTeamDialog({
         toast.success(t("teams.created"));
         setOpen(false);
         onCreated?.();
-      } catch (e: unknown) {
-        const message =
-          e instanceof Error ? e.message : t("teams.failedToCreate");
-        toast.error(message);
+      } catch (error) {
+        handleError(error, t("teams.failedToCreate"));
       }
     },
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
         <Button type="button" variant="default">
           <Plus />
@@ -97,7 +103,7 @@ export function CreateTeamDialog({
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
-                  <p className="text-red-500 text-sm" key={err?.message}>
+                  <p className="text-destructive text-sm" key={err?.message}>
                     {err?.message}
                   </p>
                 ))}
@@ -118,7 +124,7 @@ export function CreateTeamDialog({
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
-                  <p className="text-red-500 text-sm" key={err?.message}>
+                  <p className="text-destructive text-sm" key={err?.message}>
                     {err?.message}
                   </p>
                 ))}

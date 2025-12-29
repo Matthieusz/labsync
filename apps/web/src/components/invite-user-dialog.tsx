@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error-handling";
 
 type InviteUserDialogProps = {
   organizationId: string;
@@ -62,25 +63,28 @@ export function InviteUserDialog({
           setOpen(false);
           form.reset();
         }
-      } catch (error: unknown) {
+      } catch (error) {
         if (error instanceof z.ZodError) {
           const firstError = error.issues[0];
           toast.error(
-            firstError?.message || t("organizations.validationError")
+            firstError?.message ?? t("organizations.validationError")
           );
         } else {
-          const message =
-            error instanceof Error
-              ? error.message
-              : t("organizations.failedToSend");
-          toast.error(message);
+          handleError(error, t("organizations.failedToSend"));
         }
       }
     },
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" type="button" variant="outline">
           <UserPlus />
@@ -131,7 +135,7 @@ export function InviteUserDialog({
                   value={field.state.value}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-destructive text-sm">
                     {field.state.meta.errors[0]}
                   </p>
                 )}

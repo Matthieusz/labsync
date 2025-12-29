@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error-handling";
 
 const SLUG_REGEX = /^[a-z0-9-]+$/;
 
@@ -49,16 +50,21 @@ export function CreateOrganizationDialog() {
         });
         toast.success(t("organizations.created"));
         setOpen(false);
-      } catch (e: unknown) {
-        const message =
-          e instanceof Error ? e.message : t("organizations.failedToCreate");
-        toast.error(message);
+      } catch (error) {
+        handleError(error, t("organizations.failedToCreate"));
       }
     },
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
         <Button type="button" variant="default">
           <Plus />

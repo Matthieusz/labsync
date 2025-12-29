@@ -254,6 +254,9 @@ function ChatCardInner({
             {displayTitle}
           </CardTitle>
           <Button
+            aria-label={
+              isChatExpanded ? t("common.collapse") : t("common.expand")
+            }
             onClick={() => setIsChatExpanded(!isChatExpanded)}
             size="sm"
             type="button"

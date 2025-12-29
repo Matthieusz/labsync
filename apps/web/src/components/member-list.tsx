@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import InviteUserDialog from "./invite-user-dialog";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -117,8 +117,12 @@ function MemberListSkeleton() {
   );
 }
 
-// Member list item component
-function MemberListItem({ member }: { member: Member }) {
+// Member list item component - memoized for performance in lists
+const MemberListItem = memo(function MemberListItemInner({
+  member,
+}: {
+  member: Member;
+}) {
   const displayName = member.name || member.email || "Unknown";
   const initials = displayName.substring(0, 2).toUpperCase();
 
@@ -152,7 +156,7 @@ function MemberListItem({ member }: { member: Member }) {
       </Badge>
     </li>
   );
-}
+});
 
 // Member list content component
 function MemberListContent({
@@ -298,6 +302,9 @@ export const MemberList = ({
               organizationName={result.data.name || orgSlug}
             />
             <Button
+              aria-label={
+                isExpanded ? t("common.collapse") : t("common.expand")
+              }
               onClick={() => setIsExpanded(!isExpanded)}
               size="sm"
               type="button"

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error-handling";
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -70,16 +71,21 @@ export function JoinTeamDialog({
           to: "/dashboard/$orgSlug/$teamId",
           params: { orgSlug, teamId },
         });
-      } catch (e: unknown) {
-        const message =
-          e instanceof Error ? e.message : t("teams.failedToJoin");
-        toast.error(message);
+      } catch (error) {
+        handleError(error, t("teams.failedToJoin"));
       }
     },
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" type="button" variant="outline">
           <UserPlus />
@@ -113,7 +119,7 @@ export function JoinTeamDialog({
                   value={field.state.value}
                 />
                 {field.state.meta.errors.map((err) => (
-                  <p className="text-red-500 text-sm" key={err?.message}>
+                  <p className="text-destructive text-sm" key={err?.message}>
                     {err?.message}
                   </p>
                 ))}
