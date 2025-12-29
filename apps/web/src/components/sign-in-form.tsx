@@ -105,7 +105,7 @@ export default function SignInForm({
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>{t("teams.password")}</Label>
+                <Label htmlFor={field.name}>{t("common.password")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}

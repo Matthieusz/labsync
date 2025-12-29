@@ -17,10 +17,15 @@ export default {
     create: "Utwórz",
     creating: "Tworzenie...",
     name: "Imię",
+    password: "Hasło",
     toggleTheme: "Przełącz motyw",
     light: "Jasny",
     dark: "Ciemny",
     system: "Systemowy",
+    collapse: "Zwiń",
+    expand: "Rozwiń",
+    tryAgain: "Spróbuj ponownie",
+    reloadPage: "Odśwież stronę",
   },
   home: {
     apiStatus: "Status API",
@@ -134,6 +139,10 @@ export default {
     passwordsDoNotMatch: "Hasła nie pasują do siebie",
     confirmPassword: "Potwierdź hasło",
     nameMinLength: "Imię musi mieć co najmniej {{count}} znaków",
+    signInRequired: "Wymagane logowanie",
+    signInDescription:
+      "Aby uzyskać dostęp do tej strony, musisz być zalogowany.",
+    goToSignIn: "Przejdź do logowania",
   },
   calendar: {
     title: "Kalendarz",
@@ -219,5 +228,9 @@ export default {
     noResults: "Nie znaleziono członków",
     tryDifferentFilter: "Spróbuj innego wyszukiwania lub filtra",
     loading: "Ładowanie członków...",
+  },
+  errors: {
+    somethingWentWrong: "Coś poszło nie tak",
+    errorDescription: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
   },
 } as const;

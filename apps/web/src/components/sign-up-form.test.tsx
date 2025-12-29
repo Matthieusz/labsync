@@ -16,7 +16,7 @@ vi.mock("react-i18next", () => ({
         "common.name": "Name",
         "common.email": "Email",
         "common.creating": "Creating...",
-        "teams.password": "Password",
+        "common.password": "Password",
         "auth.invalidEmail": "Invalid email",
         "auth.nameMinLength": `Name must be at least ${options?.count} characters`,
         "auth.passwordMinLength": `Password must be at least ${options?.count} characters`,

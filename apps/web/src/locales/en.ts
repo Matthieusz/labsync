@@ -17,10 +17,15 @@ export default {
     create: "Create",
     creating: "Creating...",
     name: "Name",
+    password: "Password",
     toggleTheme: "Toggle theme",
     light: "Light",
     dark: "Dark",
     system: "System",
+    collapse: "Collapse",
+    expand: "Expand",
+    tryAgain: "Try Again",
+    reloadPage: "Reload Page",
   },
   home: {
     apiStatus: "API Status",
@@ -134,6 +139,9 @@ export default {
     passwordsDoNotMatch: "Passwords do not match",
     confirmPassword: "Confirm Password",
     nameMinLength: "Name must be at least {{count}} characters",
+    signInRequired: "Sign in required",
+    signInDescription: "You need to be signed in to access this page.",
+    goToSignIn: "Go to Sign In",
   },
   calendar: {
     title: "Calendar",
@@ -219,5 +227,9 @@ export default {
     noResults: "No members found",
     tryDifferentFilter: "Try a different search or filter",
     loading: "Loading members...",
+  },
+  errors: {
+    somethingWentWrong: "Something went wrong",
+    errorDescription: "An unexpected error occurred. Please try again.",
   },
 } as const;
