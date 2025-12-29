@@ -77,7 +77,7 @@ describe("teams", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.data).toHaveLength(2);
-      expect(result.data[0].name).toBe("Team Alpha");
+      expect(result.data![0].name).toBe("Team Alpha");
     });
 
     it("should return empty array when no teams", async () => {
@@ -140,7 +140,7 @@ describe("teams", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.data).toBeDefined();
-      expect(result.data.name).toBe("New Team");
+      expect(result.data!.name).toBe("New Team");
     });
 
     it("should handle creation error", async () => {

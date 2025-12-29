@@ -321,7 +321,7 @@ describe("organizations", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.data).toBeDefined();
-      expect(result.data.id).toBe("org-new");
+      expect(result.data!.id).toBe("org-new");
     });
 
     it("should handle creation error", async () => {
@@ -421,7 +421,7 @@ describe("organizations", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.data).toHaveLength(2);
-      expect(result.data[0].organizationName).toBe("Org 1");
+      expect(result.data![0].organizationName).toBe("Org 1");
     });
 
     it("should return error when user email not found", async () => {
