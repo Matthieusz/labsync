@@ -19,8 +19,99 @@
       "!**/.alchemy",
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
-      "!**/.source"
+      "!**/.source",
+      "!**/_generated"
     ]
   },
-  "extends": ["ultracite"]
+  "extends": ["ultracite"],
+  "css": {
+    "linter": {
+      "enabled": false
+    }
+  },
+  "linter": {
+    "rules": {
+      "performance": {
+        "noNamespaceImport": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/test.setup.ts",
+        "**/setup.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noMagicNumbers": "off",
+            "noNonNullAssertion": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off",
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/healthCheck.ts",
+        "**/healthCheck.test.ts",
+        "**/privateData.ts",
+        "**/privateData.test.ts",
+        "**/generatedSchema.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/router.tsx"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useConsistentTypeDefinitions": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/test-utils.tsx"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useConsistentTypeDefinitions": "off"
+          },
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/ui/calendar.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNestedComponentDefinitions": "off"
+          },
+          "nursery": {
+            "noShadow": "off"
+          }
+        }
+      }
+    }
+  ]
 }

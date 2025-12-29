@@ -19,12 +19,25 @@ export default function SignUpForm({
     from: "/",
   });
 
+  const NAME_MIN_LENGTH = 2;
+  const PASSWORD_MIN_LENGTH = 8;
+
   const formSchema = useMemo(
     () =>
       z.object({
-        name: z.string().min(2, t("auth.nameMinLength", { count: 2 })),
+        name: z
+          .string()
+          .min(
+            NAME_MIN_LENGTH,
+            t("auth.nameMinLength", { count: NAME_MIN_LENGTH })
+          ),
         email: z.email(t("auth.invalidEmail")),
-        password: z.string().min(8, t("auth.passwordMinLength", { count: 8 })),
+        password: z
+          .string()
+          .min(
+            PASSWORD_MIN_LENGTH,
+            t("auth.passwordMinLength", { count: PASSWORD_MIN_LENGTH })
+          ),
       }),
     [t]
   );

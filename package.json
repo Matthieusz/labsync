@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "biome check --write .",
+    "check": "biome check --write . --max-diagnostics 400",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",

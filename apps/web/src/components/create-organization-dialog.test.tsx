@@ -152,7 +152,7 @@ describe("CreateOrganizationDialog", () => {
     const submitButtons = screen.getAllByRole("button", {
       name: /Create Organization/i,
     });
-    const submitButton = submitButtons[submitButtons.length - 1];
+    const submitButton = submitButtons.at(-1);
     await userEvent.click(submitButton);
 
     await waitFor(() => {

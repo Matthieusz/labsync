@@ -19,11 +19,18 @@ export default function SignInForm({
     from: "/",
   });
 
+  const PASSWORD_MIN_LENGTH = 8;
+
   const formSchema = useMemo(
     () =>
       z.object({
         email: z.email(t("auth.invalidEmail")),
-        password: z.string().min(8, t("auth.passwordMinLength", { count: 8 })),
+        password: z
+          .string()
+          .min(
+            PASSWORD_MIN_LENGTH,
+            t("auth.passwordMinLength", { count: PASSWORD_MIN_LENGTH })
+          ),
       }),
     [t]
   );

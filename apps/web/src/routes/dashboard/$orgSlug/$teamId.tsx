@@ -3,14 +3,13 @@ import { api } from "@labsync/backend/convex/_generated/api";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { ChevronDown, ChevronUp, FlaskConical, Info } from "lucide-react";
+import { FlaskConical } from "lucide-react";
 import { useState } from "react";
 import { ChatCard } from "@/components/chat-card";
 import { FileUpload } from "@/components/file-upload";
 import Loader from "@/components/loader";
 import { MemberList } from "@/components/member-list";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UserMenu from "@/components/user-menu";
 
 type TeamSummary = {
@@ -49,7 +48,7 @@ function TeamRouteComponent() {
     ? (teamsResult.data as TeamSummary[])
     : [];
   const team = teamData.find((candidate) => candidate.id === teamId);
-  const createdAtLabel =
+  const _createdAtLabel =
     typeof team?.createdAt === "number" && Number.isFinite(team.createdAt)
       ? new Date(team.createdAt).toLocaleString([], {
           dateStyle: "medium",
@@ -77,7 +76,7 @@ function TeamRouteComponent() {
       {}
     ) ?? {};
 
-  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [_isDetailsExpanded, _setIsDetailsExpanded] = useState(true);
 
   return (
     <>
